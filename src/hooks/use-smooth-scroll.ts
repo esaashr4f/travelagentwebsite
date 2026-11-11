@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import Lenis from 'lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { brand } from '@/config/brand'
 import { reducedMotion } from '@/lib/motion'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -19,7 +20,15 @@ export function useSmoothScroll() {
 
     // anchors: in-page links (#journeys, #enquire…) glide there instead of jumping,
     // stopping clear of the fixed header (Lenis reads that gap from scroll-margin-top in CSS).
-    const lenis = new Lenis({ lerp: 0.1, anchors: true })
+    // Tuned to match Le Sirenuse (Locomotive Scroll, lerp 0.05): each frame the page covers
+    // 5% of the remaining distance, so it keeps gliding after the wheel stops. Phones keep
+    // native touch scrolling, as theirs do. Lenis would otherwise switch itself off for the
+    // OS "reduce motion" setting; that choice is ours, made in src/config/brand.ts.
+    const lenis = new Lenis({
+      lerp: 0.05,
+      anchors: true,
+      respectReducedMotion: brand.respectReducedMotion,
+    })
     instance = lenis
     lenis.on('scroll', ScrollTrigger.update)
 
