@@ -18,8 +18,8 @@ export function useSmoothScroll() {
     if (reducedMotion()) return
 
     // anchors: in-page links (#journeys, #enquire…) glide there instead of jumping,
-    // stopping clear of the fixed header.
-    const lenis = new Lenis({ lerp: 0.1, anchors: { offset: -80 } })
+    // stopping clear of the fixed header (Lenis reads that gap from scroll-margin-top in CSS).
+    const lenis = new Lenis({ lerp: 0.1, anchors: true })
     instance = lenis
     lenis.on('scroll', ScrollTrigger.update)
 

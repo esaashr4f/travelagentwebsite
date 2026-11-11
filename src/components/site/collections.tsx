@@ -9,13 +9,13 @@ export function Collections() {
   const c = collections[active]
 
   return (
-    <section id="collections" className="pb-[14svh]">
-      <h2 data-reveal className="px-5 pb-[7svh] text-center text-[clamp(2rem,3.2vw,2.75rem)]">
+    <section id="collections" className="fit-screen flex flex-col">
+      <h2 data-reveal className="px-5 py-[7svh] text-center md:py-[4.5svh] text-[clamp(2rem,3.2vw,2.75rem)]">
         Where would you like to be?
       </h2>
 
       {/* A soft panel beside a large photo; the arrows step through the collections. */}
-      <div data-reveal className="grid md:min-h-[78svh] md:grid-cols-2">
+      <div data-reveal className="grid md:min-h-0 md:flex-1 md:grid-cols-2">
         <div className="relative order-2 flex flex-col items-center justify-center bg-tint px-8 py-16 text-center md:order-1">
           <div key={active} className="animate-in fade-in duration-700">
             <h3 className="text-[clamp(2rem,3vw,2.75rem)]">{c.title}</h3>

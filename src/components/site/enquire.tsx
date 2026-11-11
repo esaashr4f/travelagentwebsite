@@ -25,7 +25,7 @@ export function Enquire() {
   }
 
   return (
-    <section id="enquire" className="grid border-t border-line md:min-h-svh md:grid-cols-2">
+    <section id="enquire" className="grid border-t border-line md:min-h-[calc(100svh-var(--nav-h))] md:grid-cols-2">
       <div className="relative min-h-[50svh] overflow-hidden bg-tint">
         <img
           data-parallax
