@@ -2,6 +2,7 @@ import type { RefObject } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import { SCENES } from '@/lib/motion'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -10,12 +11,12 @@ gsap.registerPlugin(ScrollTrigger)
 //   data-rise="120"    block rises (and fades up) as it enters, tied to scroll position
 //   data-clip-reveal   frame unveils from the bottom as it enters
 // Everything is scrubbed, so it moves with the scrollbar and reverses on the way back up.
-// Desktop only, and off for reduced motion.
+// Laptops and up (see SCENES in src/lib/motion.ts).
 export function useScrollMotion(scope: RefObject<HTMLElement | null>) {
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
-      mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
+      mm.add(SCENES, () => {
         gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((el) => {
           const amount = Number(el.dataset.parallax) || 8
           gsap.set(el, { scale: 1 + (amount * 2.4) / 100 })

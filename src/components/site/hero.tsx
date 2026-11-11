@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { brand } from '@/config/brand'
 import { heroSlides } from '@/data/site'
-import { MOTION_OK, SCENES } from '@/lib/motion'
+import { MOTION_OK, reducedMotion, SCENES } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 const SLIDE_MS = 4500
@@ -18,7 +18,7 @@ type HeroProps = {
 export function Hero({ video }: HeroProps) {
   const [active, setActive] = useState(0)
   // Plays for everyone; a crossfade isn't motion in the vestibular sense, and the slow zoom
-  // is switched off by CSS for reduced-motion users. The Pause control covers WCAG 2.2.2.
+  // follows the brand's reduce-motion choice. The Pause control covers WCAG 2.2.2.
   const [paused, setPaused] = useState(false)
   const root = useRef<HTMLElement>(null)
 
@@ -77,7 +77,7 @@ export function Hero({ video }: HeroProps) {
               decoding="async"
               className={cn(
                 'absolute inset-0 h-full w-full object-cover transition-opacity duration-[1400ms] ease-in-out',
-                i === active ? 'kenburns opacity-100' : 'opacity-0',
+                i === active ? cn('opacity-100', !reducedMotion() && 'kenburns') : 'opacity-0',
                 paused && '[animation-play-state:paused]',
               )}
             />

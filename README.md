@@ -38,8 +38,11 @@ before launch.
   - scroll-linked parallax and rises, declared with `data-parallax` and `data-rise`
     attributes (`src/hooks/use-scroll-motion.ts`);
   - headline and review text reveals (GSAP SplitText).
-- Smooth scrolling and decorative motion switch off for visitors who have
-  "reduce motion" turned on; the journeys row and slideshow still work, with a pause control.
+- On laptops each section is a full-screen scroll scene (pinned, scrubbed to the scroll);
+  phones keep normal scrolling.
+- `respectReducedMotion` in `src/config/brand.ts` decides whether visitors with the OS
+  "reduce motion" setting get the full experience (`false`, the default) or a calm,
+  static page (`true`). The slideshow has a pause control either way.
 
 ## Adding components
 

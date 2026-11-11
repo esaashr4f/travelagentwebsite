@@ -12,6 +12,9 @@ export const brand = {
   // Shown in the footer; regulatory wording must be confirmed for each client.
   legal: 'Independent travel advisor.',
   protection: 'Financial protection details are provided with every booking.',
+  // false: smooth scrolling and every scroll scene run for all visitors, even with the
+  // OS "reduce motion" setting on. true: those visitors get a calm, static page instead.
+  respectReducedMotion: false,
 }
 
 export const brandName = `${brand.name} ${brand.descriptor}`

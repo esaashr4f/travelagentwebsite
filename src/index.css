@@ -157,6 +157,3 @@
   animation: kenburns 8s ease-out forwards;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .kenburns { animation: none; }
-}
