@@ -83,11 +83,12 @@ export function Hero({ video }: HeroProps) {
       <div className="absolute inset-0 bg-gradient-to-b from-espresso/45 via-transparent to-espresso/70" />
 
       <div className="relative mx-auto flex h-full max-w-[1600px] flex-col justify-end px-5 pb-10 md:px-10 md:pb-14">
-        <h1 className="text-[clamp(3rem,9vw,8.5rem)] leading-[0.95] tracking-[-0.01em]">
+        <h1 className="text-[clamp(2.9rem,7.6vw,6rem)] leading-[0.98] tracking-[-0.01em]">
           <span className="block overflow-hidden pb-[0.06em]">
             <span data-hero-line className="block">Journeys,</span>
           </span>
-          <span className="block overflow-hidden pb-[0.06em]">
+          {/* Extra bottom room so the italic descender in "beautifully" isn't clipped by the mask. */}
+          <span className="block overflow-hidden pb-[0.14em]">
             <span data-hero-line className="block">
               <em className="text-sand">beautifully</em> planned.
             </span>
@@ -103,16 +104,14 @@ export function Hero({ video }: HeroProps) {
               <span key={active} className="animate-in fade-in duration-700">
                 {heroSlides[active].place}
               </span>
-              <span className="tabular-nums text-cream/60">
-                {String(active + 1).padStart(2, '0')} / {String(heroSlides.length).padStart(2, '0')}
-              </span>
               <button
                 type="button"
                 onClick={() => setPaused((p) => !p)}
                 aria-label={paused ? 'Play slideshow' : 'Pause slideshow'}
-                className="link-line text-cream/80 hover:text-cream"
+                // Padding widens the hit area to 44px tall without changing the type.
+                className="group -my-3 py-3 text-cream/80 hover:text-cream"
               >
-                {paused ? 'Play' : 'Pause'}
+                <span className="link-line group-hover:[background-size:100%_1px]">{paused ? 'Play' : 'Pause'}</span>
               </button>
             </div>
           )}

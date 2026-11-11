@@ -38,18 +38,18 @@ export const reviews = [
     trip: 'Greek islands, 2025',
     image: '/images/review-corfu.webp',
     quote:
-      'Every detail was taken care of, from the transfers to the table she booked us on our last night. We didn’t have to think about a thing.',
+      'Every detail was taken care of, right down to the table on our last night. We didn’t have to think about a thing.',
   },
   {
     trip: 'Mallorca, 2025',
     image: '/images/review-mallorca.webp',
     quote:
-      'The hotel was exactly right for us, and the list of beaches and restaurants she sent was better than any guidebook.',
+      'The hotel was exactly right for us, and the list of beaches and restaurants beat any guidebook.',
   },
   {
     trip: 'Mediterranean cruise, 2025',
     image: '/images/review-cruise.webp',
     quote:
-      'Flights, connections and the ship all fitted together perfectly. Easily the most relaxed trip we have ever taken.',
+      'Flights, connections and the ship all fitted together perfectly. Our most relaxed trip yet.',
   },
 ]

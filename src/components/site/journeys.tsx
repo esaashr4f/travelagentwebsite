@@ -36,13 +36,12 @@ export function Journeys() {
 
   const intro = (
     <>
-      <p className="eyebrow">Signature journeys</p>
       <div>
-        <h2 className="mt-6 text-[clamp(2.4rem,3.6vw,3.8rem)] leading-[1.04]">
+        <h2 className="text-[clamp(2.4rem,3.6vw,3.8rem)] leading-[1.04]">
           Itineraries {brand.advisor} <em>loves</em> to send people on.
         </h2>
         <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
-          Each one is a starting point. Tell her what you love and she will rewrite it around you.
+          Each one is a starting point, rewritten around whoever is travelling.
         </p>
       </div>
     </>
@@ -65,14 +64,14 @@ export function Journeys() {
             href="#enquire"
             className="group w-[80vw] max-w-[360px] shrink-0 snap-start md:w-[34vw] md:max-w-none lg:w-[28vw]"
           >
-            <div className="relative overflow-hidden bg-[#dccab0]">
+            <div className="relative overflow-hidden bg-border">
               <img
                 src={j.image}
                 alt=""
                 // Six small images: load them up front so swiping never reveals a blank card.
                 loading="eager"
                 decoding="async"
-                className="aspect-[4/5] w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05] md:h-[52svh] md:aspect-auto"
+                className="aspect-[4/5] w-full object-cover transition-transform duration-700 ease-[var(--ease-out)] group-hover:scale-[1.04] md:h-[52svh] md:aspect-auto"
               />
             </div>
             <div className="mt-5 flex items-baseline justify-between gap-4 text-[0.68rem] font-medium tracking-[0.22em] uppercase">

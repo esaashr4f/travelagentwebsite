@@ -1,8 +1,18 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type FormEvent, type ReactNode } from 'react'
 import { brand } from '@/config/brand'
 
+// The field's focus state is a full-strength underline in the accent colour, replacing the outline.
 const field =
-  'w-full border-0 border-b border-input bg-transparent px-0 py-3 text-base text-espresso placeholder:text-muted-foreground/70 focus:border-espresso focus:outline-none [&>option]:bg-cream [&>option]:text-espresso'
+  'w-full border-0 border-b border-input bg-transparent px-0 py-2.5 text-base text-espresso placeholder:text-muted-foreground focus:border-terracotta focus:shadow-[0_1px_0_0_var(--terracotta)] focus:outline-none focus-visible:outline-none [&>option]:bg-cream [&>option]:text-espresso'
+
+function Field({ label, className, children }: { label: string; className?: string; children: ReactNode }) {
+  return (
+    <label className={'grid gap-1 ' + (className ?? '')}>
+      <span className="text-sm text-muted-foreground">{label}</span>
+      {children}
+    </label>
+  )
+}
 
 export function Enquire() {
   const [sent, setSent] = useState(false)
@@ -25,65 +35,80 @@ export function Enquire() {
             </div>
           ) : (
             <>
-              <p className="eyebrow">Begin here</p>
-              <h2 className="mt-5 text-[clamp(2.2rem,3.6vw,3.4rem)] leading-[1.05]">
+              <h2 className="text-[clamp(2.2rem,3.6vw,3.4rem)] leading-[1.05]">
                 Tell {brand.advisor} where you are <em>dreaming</em> of.
               </h2>
 
-              <form onSubmit={onSubmit} className="mt-10 grid gap-6 sm:grid-cols-2">
-                <input required name="name" autoComplete="name" aria-label="Your name" placeholder="Your name…" className={field} />
-                <input required type="email" name="email" autoComplete="email" spellCheck={false} aria-label="Email" placeholder="Email…" className={field} />
-                <input name="destination" autoComplete="off" aria-label="Destination" placeholder="Where to? e.g. Amalfi Coast" className={field} />
-                <input name="when" autoComplete="off" aria-label="When" placeholder="When? e.g. June 2027" className={field} />
-                <select name="adults" defaultValue="2" aria-label="Adults" className={field}>
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                    <option key={n} value={n}>
-                      {n} {n === 1 ? 'adult' : 'adults'}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  name="children"
-                  value={children}
-                  onChange={(e) => setChildren(Number(e.target.value))}
-                  aria-label="Children"
-                  className={field}
-                >
-                  {[0, 1, 2, 3, 4, 5, 6].map((n) => (
-                    <option key={n} value={n}>
-                      {n === 0 ? 'No children' : `${n} ${n === 1 ? 'child' : 'children'}`}
-                    </option>
-                  ))}
-                </select>
-                {children > 0 && (
+              <form onSubmit={onSubmit} className="mt-10 grid gap-x-6 gap-y-7 sm:grid-cols-2">
+                <Field label="Name">
+                  <input required name="name" autoComplete="name" placeholder="e.g. Sofia Reyes" className={field} />
+                </Field>
+                <Field label="Email">
                   <input
-                    name="childrenAges"
-                    autoComplete="off"
-                    aria-label="Children’s ages"
-                    placeholder="Children’s ages, e.g. 4 and 9"
-                    className={field + ' sm:col-span-2 animate-in fade-in duration-500'}
+                    required
+                    type="email"
+                    name="email"
+                    autoComplete="email"
+                    spellCheck={false}
+                    placeholder="you@example.com"
+                    className={field}
                   />
+                </Field>
+                <Field label="Where to?">
+                  <input name="destination" autoComplete="off" placeholder="e.g. Amalfi Coast" className={field} />
+                </Field>
+                <Field label="When?">
+                  <input name="when" autoComplete="off" placeholder="e.g. June 2027" className={field} />
+                </Field>
+                <Field label="Adults">
+                  <select name="adults" defaultValue="2" className={field}>
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Children">
+                  <select
+                    name="children"
+                    value={children}
+                    onChange={(e) => setChildren(Number(e.target.value))}
+                    className={field}
+                  >
+                    {[0, 1, 2, 3, 4, 5, 6].map((n) => (
+                      <option key={n} value={n}>
+                        {n === 0 ? 'None' : n}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                {children > 0 && (
+                  <Field label="Children’s ages" className="sm:col-span-2 animate-in fade-in duration-300">
+                    <input name="childrenAges" autoComplete="off" placeholder="e.g. 4 and 9" className={field} />
+                  </Field>
                 )}
-                <select name="budget" defaultValue="" aria-label="Budget per person" className={field + ' sm:col-span-2'}>
-                  <option value="" disabled>
-                    Budget per person
-                  </option>
-                  <option>Under £2,000</option>
-                  <option>£2,000 – £5,000</option>
-                  <option>£5,000 – £10,000</option>
-                  <option>£10,000+</option>
-                </select>
-                <textarea
-                  name="message"
-                  rows={3}
-                  aria-label="Message"
-                  placeholder="Anything she should know — occasions, the trip you can’t stop thinking about…"
-                  className={field + ' resize-none sm:col-span-2'}
-                />
+                <Field label="Budget per person" className="sm:col-span-2">
+                  <select name="budget" defaultValue="" className={field}>
+                    <option value="">Not sure yet</option>
+                    <option>Under £2,000</option>
+                    <option>£2,000 - £5,000</option>
+                    <option>£5,000 - £10,000</option>
+                    <option>£10,000+</option>
+                  </select>
+                </Field>
+                <Field label="Anything else?" className="sm:col-span-2">
+                  <textarea
+                    name="message"
+                    rows={3}
+                    placeholder="Occasions, who is coming, the trip you can’t stop thinking about…"
+                    className={field + ' resize-none'}
+                  />
+                </Field>
                 <div className="flex flex-col gap-5 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
                   <button
                     type="submit"
-                    className="bg-terracotta px-9 py-4 text-[0.7rem] font-medium tracking-[0.22em] text-cream uppercase transition-colors duration-300 hover:bg-espresso"
+                    className="press bg-terracotta px-9 py-4 text-[0.7rem] font-medium tracking-[0.22em] text-cream uppercase hover:bg-espresso"
                   >
                     Send enquiry
                   </button>

@@ -8,13 +8,14 @@ import { cn } from '@/lib/utils'
 gsap.registerPlugin(SplitText)
 
 const ROTATE_MS = 9000
-const pad = (n: number) => String(n).padStart(2, '0')
 
 export function Reviews() {
   const [active, setActive] = useState(0)
   // Auto-advance stops for good once someone steps through by hand, and never starts for reduced motion.
   const [auto, setAuto] = useState(() => !reducedMotion())
+  // Hover or keyboard focus inside the section holds the current review (WCAG 2.2.2).
   const [hovered, setHovered] = useState(false)
+  const [focused, setFocused] = useState(false)
   const [inView, setInView] = useState(false)
   const ref = useRef<HTMLElement>(null)
   const quote = useRef<HTMLParagraphElement>(null)
@@ -37,7 +38,7 @@ export function Reviews() {
   // Each new quote rises in word by word from behind a mask.
   useEffect(() => {
     if (!inView || !quote.current || reducedMotion()) return
-    const split = SplitText.create(quote.current, { type: 'words', mask: 'words' })
+    const split = SplitText.create(quote.current, { type: 'words', mask: 'words', aria: 'none' })
     const tween = gsap.from(split.words, { yPercent: 100, duration: 0.9, stagger: 0.018, ease: 'power3.out' })
     return () => {
       tween.kill()
@@ -46,10 +47,10 @@ export function Reviews() {
   }, [active, inView])
 
   useEffect(() => {
-    if (!inView || !auto || hovered) return
+    if (!inView || !auto || hovered || focused) return
     const id = setTimeout(() => setActive((i) => (i + 1) % reviews.length), ROTATE_MS)
     return () => clearTimeout(id)
-  }, [active, inView, auto, hovered])
+  }, [active, inView, auto, hovered, focused])
 
   const go = (step: number) => {
     setAuto(false)
@@ -65,6 +66,10 @@ export function Reviews() {
       aria-label="Client reviews"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onFocus={() => setFocused(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false)
+      }}
       className="bg-espresso text-cream"
     >
       <div className="mx-auto grid max-w-[1600px] md:min-h-[86svh] md:grid-cols-2">
@@ -86,14 +91,13 @@ export function Reviews() {
         </div>
 
         <figure className="flex flex-col justify-between gap-14 px-5 py-16 md:px-16 md:py-20 lg:px-24">
-          <p className="eyebrow text-gold">In their words</p>
-
-          <div>
+          <div className="my-auto">
             <span aria-hidden className="block font-heading text-[7rem] leading-[0.6] text-terracotta">
               “
             </span>
+            {/* Announce changes the visitor asked for, not the automatic rotation. */}
             <blockquote
-              aria-live="polite"
+              aria-live={auto ? 'off' : 'polite'}
               className="mt-6 min-h-[9em] font-heading text-[clamp(1.5rem,2.4vw,2.3rem)] leading-[1.3] md:min-h-[7.5em]"
             >
               <p key={active} ref={quote}>
@@ -105,18 +109,21 @@ export function Reviews() {
             </figcaption>
           </div>
 
-          <div className="flex items-center justify-between border-t border-cream/15 pt-6 text-[0.68rem] font-medium tracking-[0.22em] uppercase">
-            <span className="tabular-nums text-cream/50">
-              {pad(active + 1)} / {pad(reviews.length)}
-            </span>
-            <div className="flex gap-8">
-              <button type="button" onClick={() => go(-1)} className="link-line text-cream/80 hover:text-cream">
-                Previous
+          <div className="flex justify-end gap-8 border-t border-cream/15 pt-3 text-[0.68rem] font-medium tracking-[0.22em] uppercase">
+            {[
+              { label: 'Previous', step: -1 },
+              { label: 'Next', step: 1 },
+            ].map((b) => (
+              <button
+                key={b.label}
+                type="button"
+                onClick={() => go(b.step)}
+                aria-label={`${b.label} review`}
+                className="group py-3 text-cream/80 hover:text-cream"
+              >
+                <span className="link-line group-hover:[background-size:100%_1px]">{b.label}</span>
               </button>
-              <button type="button" onClick={() => go(1)} className="link-line text-cream/80 hover:text-cream">
-                Next
-              </button>
-            </div>
+            ))}
           </div>
         </figure>
       </div>

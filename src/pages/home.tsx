@@ -13,7 +13,7 @@ export default function Home() {
   useScrollMotion(root)
 
   useEffect(() => {
-    document.title = `${brandName} — Bespoke holidays by ${brand.advisorFullName}`
+    document.title = `${brandName} | Bespoke holidays by ${brand.advisorFullName}`
   }, [])
 
   return (
