@@ -25,8 +25,12 @@ export function Enquire() {
   }
 
   return (
-    <section id="enquire" data-scene className="relative z-50 bg-background md:-mt-[100svh] md:flex md:min-h-svh md:items-center md:shadow-[0_-20px_50px_rgba(42,28,21,0.3)]">
-      <div className="mx-auto w-full max-w-[1600px] px-5 py-24 md:px-10 md:pt-32 md:pb-16">
+    // Last scene. On laptops it slides over the reviews, then its frame sticks and holds for
+    // most of a screen before the page lifts to reveal the footer, so a casual scroll
+    // lands on the form rather than running past it. The form is sized to fit one screen.
+    <section id="enquire" data-scene className="relative z-50 md:-mt-[100svh] md:h-[175svh]">
+      <div className="relative bg-background md:sticky md:top-0 md:flex md:h-svh md:min-h-[640px] md:items-center md:shadow-[0_-20px_50px_rgba(42,28,21,0.3)]">
+      <div className="mx-auto w-full max-w-[1600px] px-5 py-24 md:px-10 md:pt-28 md:pb-8">
       <div className="grid gap-14 md:grid-cols-12 md:items-center md:gap-10">
         <div data-rise="80" className="order-2 md:order-1 md:col-span-6">
           {sent ? (
@@ -36,15 +40,15 @@ export function Enquire() {
             </div>
           ) : (
             <>
-              <h2 className="text-[clamp(2.2rem,3.6vw,3.4rem)] leading-[1.05]">
+              <h2 className="text-[clamp(2.1rem,min(3.4vw,5.6svh),3.4rem)] leading-[1.05]">
                 Tell {brand.advisor} where you are dreaming of.
               </h2>
 
-              <form onSubmit={onSubmit} className="mt-10 grid gap-x-6 gap-y-7 sm:grid-cols-2">
-                <Field label="Name">
+              <form onSubmit={onSubmit} className="mt-8 grid gap-x-6 gap-y-6 sm:grid-cols-2 md:mt-[4svh] md:grid-cols-6 md:gap-y-[2.6svh]">
+                <Field label="Name" className="md:col-span-3">
                   <input required name="name" autoComplete="name" placeholder="e.g. Sofia Reyes" className={field} />
                 </Field>
-                <Field label="Email">
+                <Field label="Email" className="md:col-span-3">
                   <input
                     required
                     type="email"
@@ -55,13 +59,13 @@ export function Enquire() {
                     className={field}
                   />
                 </Field>
-                <Field label="Where to?">
+                <Field label="Where to?" className="md:col-span-3">
                   <input name="destination" autoComplete="off" placeholder="e.g. Amalfi Coast" className={field} />
                 </Field>
-                <Field label="When?">
+                <Field label="When?" className="md:col-span-3">
                   <input name="when" autoComplete="off" placeholder="e.g. June 2027" className={field} />
                 </Field>
-                <Field label="Adults">
+                <Field label="Adults" className="md:col-span-2">
                   <select name="adults" defaultValue="2" className={field}>
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
                       <option key={n} value={n}>
@@ -70,7 +74,7 @@ export function Enquire() {
                     ))}
                   </select>
                 </Field>
-                <Field label="Children">
+                <Field label="Children" className="md:col-span-2">
                   <select
                     name="children"
                     value={children}
@@ -85,11 +89,11 @@ export function Enquire() {
                   </select>
                 </Field>
                 {children > 0 && (
-                  <Field label="Children’s ages" className="sm:col-span-2 animate-in fade-in duration-300">
+                  <Field label="Children’s ages" className="animate-in fade-in duration-300 sm:col-span-2 md:order-1 md:col-span-6">
                     <input name="childrenAges" autoComplete="off" placeholder="e.g. 4 and 9" className={field} />
                   </Field>
                 )}
-                <Field label="Budget per person" className="sm:col-span-2">
+                <Field label="Budget per person" className="sm:col-span-2 md:col-span-2">
                   <select name="budget" defaultValue="" className={field}>
                     <option value="">Not sure yet</option>
                     <option>Under £2,000</option>
@@ -98,15 +102,15 @@ export function Enquire() {
                     <option>£10,000+</option>
                   </select>
                 </Field>
-                <Field label="Anything else?" className="sm:col-span-2">
+                <Field label="Anything else?" className="sm:col-span-2 md:order-2 md:col-span-6">
                   <textarea
                     name="message"
-                    rows={3}
+                    rows={2}
                     placeholder="Occasions, who is coming, the trip you can’t stop thinking about…"
                     className={field + ' resize-none'}
                   />
                 </Field>
-                <div className="flex flex-col gap-5 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col gap-5 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between md:order-3 md:col-span-6">
                   <button
                     type="submit"
                     className="press bg-terracotta px-9 py-4 text-[0.75rem] font-medium tracking-[0.22em] text-cream uppercase hover:bg-espresso"
@@ -128,10 +132,11 @@ export function Enquire() {
             src="/images/enquire-breakfast.webp"
             alt="Breakfast on a terrace above the caldera in Santorini"
             decoding="async"
-            className="aspect-[4/3] w-full object-cover md:aspect-auto md:h-[68svh]"
+            className="aspect-[4/3] w-full object-cover md:aspect-auto md:h-[64svh]"
           />
           </div>
         </div>
+      </div>
       </div>
       </div>
     </section>
