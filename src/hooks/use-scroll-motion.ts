@@ -9,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger)
 // Scroll-linked motion for a page, driven by data attributes so sections stay declarative:
 //   data-parallax="8"  image drifts against the scroll inside its overflow-hidden frame
 //   data-rise="120"    block rises (and fades up) as it enters, tied to scroll position
-//   data-clip-reveal   frame unveils from the bottom as it enters
+//   data-unveil        framed photo slides up out of its mask as it enters
 // Everything is scrubbed, so it moves with the scrollbar and reverses on the way back up.
 // Laptops and up (see SCENES in src/lib/motion.ts).
 export function useScrollMotion(scope: RefObject<HTMLElement | null>) {
@@ -31,16 +31,14 @@ export function useScrollMotion(scope: RefObject<HTMLElement | null>) {
           )
         })
 
-        gsap.utils.toArray<HTMLElement>('[data-clip-reveal]').forEach((el) => {
-          gsap.fromTo(
-            el,
-            { clipPath: 'inset(100% 0 0 0)' },
-            {
-              clipPath: 'inset(0% 0 0 0)',
-              ease: 'none',
-              scrollTrigger: { trigger: el, start: 'top 95%', end: 'top 35%', scrub: 0.6 },
-            },
-          )
+        // Transform-only unveil: the inner frame slides up out of its mask while the photo
+        // settles from a zoom. (Cheaper than animating clip-path, which repaints each frame.)
+        gsap.utils.toArray<HTMLElement>('[data-unveil]').forEach((el) => {
+          const panel = el.firstElementChild
+          const img = el.querySelector('img')
+          const st = { trigger: el, start: 'top 95%', end: 'top 30%', scrub: true }
+          if (panel) gsap.fromTo(panel, { yPercent: 101 }, { yPercent: 0, ease: 'none', scrollTrigger: st })
+          if (img) gsap.fromTo(img, { scale: 1.3 }, { scale: 1, ease: 'none', scrollTrigger: st })
         })
 
         gsap.utils.toArray<HTMLElement>('[data-rise]').forEach((el) => {
@@ -52,7 +50,7 @@ export function useScrollMotion(scope: RefObject<HTMLElement | null>) {
               y: 0,
               opacity: 1,
               ease: 'none',
-              scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 55%', scrub: 0.6 },
+              scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 55%', scrub: true },
             },
           )
         })

@@ -22,7 +22,7 @@ export function Reviews() {
   const [inView, setInView] = useState(false)
   const ref = useRef<HTMLElement>(null)
   const quote = useRef<HTMLParagraphElement>(null)
-  // On laptops the section is a pinned scene and scrolling steps through the reviews.
+  // On laptops the section is a sticky scene and scrolling steps through the reviews.
   const scene = useRef<ScrollTrigger | null>(null)
   const last = reviews.length - 1
 
@@ -33,8 +33,7 @@ export function Reviews() {
         const st = ScrollTrigger.create({
           trigger: ref.current,
           start: 'top top',
-          end: `+=${last * 80}%`,
-          pin: true,
+          end: `+=${last * 100}%`,
           onUpdate: (self) => setActive(Math.min(last, Math.round(self.progress * last))),
         })
         scene.current = st
@@ -114,9 +113,12 @@ export function Reviews() {
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false)
       }}
-      className="relative z-10 bg-espresso text-cream"
+      data-scene
+      // Four screens on laptops: arrive, two steps through the reviews, be covered.
+      className="relative z-40 md:-mt-[100svh] md:h-[400svh]"
     >
-      <div className="mx-auto grid max-w-[1600px] md:h-svh md:min-h-[600px] md:grid-cols-2">
+      <div className="relative bg-espresso text-cream md:sticky md:top-0 md:h-svh md:overflow-hidden md:shadow-[0_-20px_50px_rgba(42,28,21,0.3)]">
+      <div data-scene-lift className="mx-auto grid max-w-[1600px] md:h-svh md:min-h-[600px] md:grid-cols-2">
         <div className="relative hidden overflow-hidden md:block">
           <div data-review-photos className="absolute inset-0">
           {reviews.map((r, i) => (
@@ -170,6 +172,8 @@ export function Reviews() {
             ))}
           </div>
         </figure>
+      </div>
+      <div data-scene-dim className="pointer-events-none absolute inset-0 bg-espresso opacity-0" />
       </div>
     </section>
   )

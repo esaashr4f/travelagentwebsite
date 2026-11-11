@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { brand } from '@/config/brand'
 import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { journeys } from '@/data/site'
 
@@ -10,12 +11,16 @@ export function Journeys() {
 
   useGSAP(
     () => {
-      // Desktop: pin the section and turn vertical scroll into a horizontal pan. It runs even
-      // with reduced motion on, because the movement follows the visitor's own scrolling
-      // (and without it the row can't be reached at all). Phones keep a native swipe row.
+      // Scene 4 (laptops): the section is as tall as the row is wide, plus a screen to arrive
+      // and a screen to be covered. Its frame is sticky, and the row slides sideways 1:1 with
+      // the scroll while it holds. Not tied to reduce-motion, since the row is otherwise
+      // unreachable. Phones keep a native swipe row.
       const mm = gsap.matchMedia()
       mm.add('(min-width: 768px)', () => {
         const distance = () => track.current!.scrollWidth - window.innerWidth
+        const size = () => gsap.set(root.current, { height: `calc(200svh + ${distance()}px)` })
+        size()
+        ScrollTrigger.addEventListener('refreshInit', size)
         gsap.to(track.current, {
           x: () => -distance(),
           ease: 'none',
@@ -23,11 +28,11 @@ export function Journeys() {
             trigger: root.current,
             start: 'top top',
             end: () => `+=${distance()}`,
-            pin: true,
-            scrub: 0.6,
+            scrub: true,
             invalidateOnRefresh: true,
           },
         })
+        return () => ScrollTrigger.removeEventListener('refreshInit', size)
       })
       return () => mm.revert()
     },
@@ -48,7 +53,9 @@ export function Journeys() {
   )
 
   return (
-    <section id="journeys" ref={root} className="relative z-10 overflow-hidden bg-sand py-24 md:flex md:h-svh md:items-center md:py-0 md:pt-24">
+    <section id="journeys" ref={root} data-scene className="relative z-30 md:-mt-[100svh]">
+      <div className="relative overflow-hidden bg-sand py-24 md:sticky md:top-0 md:flex md:h-svh md:items-center md:py-0 md:pt-24 md:shadow-[0_-20px_50px_rgba(42,28,21,0.22)]">
+      <div data-scene-lift className="w-full">
       {/* scroll-px-5 makes snapping respect the side padding, so the first card keeps its margin. */}
       <div
         ref={track}
@@ -83,6 +90,8 @@ export function Journeys() {
         ))}
 
         <div aria-hidden className="w-1 shrink-0 md:w-[4vw]" />
+      </div>
+      </div>
       </div>
     </section>
   )

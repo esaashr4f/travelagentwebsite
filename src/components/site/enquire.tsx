@@ -25,7 +25,7 @@ export function Enquire() {
   }
 
   return (
-    <section id="enquire" className="relative z-10 bg-background md:flex md:min-h-svh md:items-center">
+    <section id="enquire" data-scene className="relative z-50 bg-background md:-mt-[100svh] md:flex md:min-h-svh md:items-center md:shadow-[0_-20px_50px_rgba(42,28,21,0.3)]">
       <div className="mx-auto w-full max-w-[1600px] px-5 py-24 md:px-10 md:pt-32 md:pb-16">
       <div className="grid gap-14 md:grid-cols-12 md:items-center md:gap-10">
         <div data-rise="80" className="order-2 md:order-1 md:col-span-6">
@@ -122,14 +122,15 @@ export function Enquire() {
           )}
         </div>
 
-        <div data-clip-reveal className="order-1 overflow-hidden md:order-2 md:col-span-5 md:col-start-8">
+        <div data-unveil className="order-1 overflow-hidden md:order-2 md:col-span-5 md:col-start-8">
+          <div className="overflow-hidden">
           <img
-            data-parallax="6"
             src="/images/enquire-breakfast.webp"
             alt="Breakfast on a terrace above the caldera in Santorini"
-            loading="lazy"
+            decoding="async"
             className="aspect-[4/3] w-full object-cover md:aspect-auto md:h-[68svh]"
           />
+          </div>
         </div>
       </div>
       </div>

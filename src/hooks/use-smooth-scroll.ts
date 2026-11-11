@@ -19,7 +19,7 @@ export function useSmoothScroll() {
 
     // anchors: in-page links (#journeys, #enquire…) glide there instead of jumping,
     // stopping clear of the fixed header.
-    const lenis = new Lenis({ lerp: 0.08, anchors: { offset: -80 } })
+    const lenis = new Lenis({ lerp: 0.1, anchors: { offset: -80 } })
     instance = lenis
     lenis.on('scroll', ScrollTrigger.update)
 

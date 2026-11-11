@@ -18,11 +18,12 @@ export function Nav() {
     // Transparent over the hero photo, solid once the section after it reaches the bar.
     // (The hero stays pinned on laptops while the intro slides over it, so we watch the
     // intro, not the hero.) ScrollTrigger only fires when that boundary is crossed.
+    // Only the crossing matters, so no end point: sections that resize later can't move it.
     const st = ScrollTrigger.create({
       trigger: '[data-after-hero]',
       start: 'top 96px',
-      onToggle: (self) => setScrolled(self.isActive),
-      end: 'max',
+      onEnter: () => setScrolled(true),
+      onLeaveBack: () => setScrolled(false),
     })
     return () => st.kill()
   }, [])
@@ -33,7 +34,8 @@ export function Nav() {
     <header
       className={cn(
         'fixed inset-x-0 top-0 z-50 transition-colors duration-500',
-        scrolled && !open ? 'border-b border-border bg-cream/92 backdrop-blur-sm' : 'bg-transparent',
+        // Solid rather than blurred: a backdrop blur repaints every frame over moving photos.
+        scrolled && !open ? 'border-b border-border bg-cream/[0.97]' : 'bg-transparent',
         light ? 'text-cream' : 'text-espresso',
       )}
     >
