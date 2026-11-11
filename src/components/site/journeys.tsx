@@ -1,101 +1,65 @@
 import { useRef } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { brand } from '@/config/brand'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useGSAP } from '@gsap/react'
 import { journeys } from '@/data/site'
-import { layered } from '@/lib/transition'
 
 export function Journeys() {
-  const root = useRef<HTMLElement>(null)
-  const track = useRef<HTMLDivElement>(null)
+  const row = useRef<HTMLDivElement>(null)
 
-  useGSAP(
-    () => {
-      // Scene 4 (laptops): the section is as tall as the row is wide, plus a screen to arrive
-      // and a screen to be covered. Its frame is sticky, and the row slides sideways 1:1 with
-      // the scroll while it holds. Not tied to reduce-motion, since the row is otherwise
-      // unreachable. Phones keep a native swipe row.
-      const mm = gsap.matchMedia()
-      mm.add('(min-width: 768px)', () => {
-        const distance = () => track.current!.scrollWidth - window.innerWidth
-        // One screen for the frame, the row's width to pan, and (when the next scene slides
-        // over it) one more screen to be covered.
-        const size = () =>
-          gsap.set(root.current, { height: `calc(${layered ? 200 : 100}svh + ${distance()}px)` })
-        size()
-        ScrollTrigger.addEventListener('refreshInit', size)
-        gsap.to(track.current, {
-          x: () => -distance(),
-          ease: 'none',
-          scrollTrigger: {
-            trigger: root.current,
-            start: 'top top',
-            end: () => `+=${distance()}`,
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        })
-        return () => ScrollTrigger.removeEventListener('refreshInit', size)
-      })
-      return () => mm.revert()
-    },
-    { scope: root },
-  )
+  // Step one card at a time. The row is an ordinary horizontal scroller, so a vertical
+  // wheel always scrolls the page, never the row.
+  const step = (dir: number) => {
+    const el = row.current
+    const card = el?.querySelector<HTMLElement>('[data-card]')
+    if (!el || !card) return
+    el.scrollBy({ left: dir * (card.offsetWidth + 24), behavior: 'smooth' })
+  }
 
-  const intro = (
-    <>
-      <div>
-        <h2 className="text-[clamp(2.4rem,3.6vw,3.8rem)] leading-[1.04]">
-          Itineraries {brand.advisor} loves to send people on.
+  return (
+    <section id="journeys" className="py-[14svh]">
+      <div className="mx-auto max-w-[1600px] px-5 text-center md:px-10">
+        <h2 data-reveal className="text-[clamp(2rem,3.2vw,2.75rem)]">
+          Itineraries {brand.advisor} loves
         </h2>
-        <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
+        <p data-reveal style={{ '--reveal-delay': '120ms' } as React.CSSProperties} className="mx-auto mt-4 max-w-md text-lg">
           Each one is a starting point, rewritten around whoever is travelling.
         </p>
       </div>
-    </>
-  )
 
-  return (
-    <section id="journeys" ref={root} data-scene="journeys" data-bg="sand" className="relative z-30 md:-mt-[100svh]">
-      <div data-scene-frame className="relative overflow-hidden bg-sand py-24 md:sticky md:top-0 md:flex md:h-svh md:items-center md:py-0 md:pt-24 md:shadow-[0_-20px_50px_rgba(42,28,21,0.22)]">
-      <div data-scene-lift className="w-full">
-      {/* scroll-px-5 makes snapping respect the side padding, so the first card keeps its margin. */}
       <div
-        ref={track}
-        className="flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 [scrollbar-width:none] md:snap-none md:gap-8 md:overflow-visible md:px-10"
+        ref={row}
+        data-reveal
+        style={{ '--reveal-delay': '200ms' } as React.CSSProperties}
+        className="mt-[7svh] flex snap-x snap-mandatory scroll-px-5 gap-6 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:scroll-px-10 md:px-10"
       >
-        <div className="flex w-[80vw] max-w-[360px] shrink-0 snap-start flex-col justify-end pr-4 md:w-[36vw] md:max-w-none md:pr-16 lg:w-[32vw]">
-          {intro}
-        </div>
-
         {journeys.map((j) => (
-          <a
-            key={j.title}
-            href="#enquire"
-            className="group w-[80vw] max-w-[360px] shrink-0 snap-start md:w-[34vw] md:max-w-none lg:w-[28vw]"
-          >
-            <div className="relative overflow-hidden bg-border">
+          <a key={j.title} href="#enquire" data-card className="group w-[78vw] shrink-0 snap-start sm:w-[44vw] lg:w-[30vw]">
+            <div className="overflow-hidden bg-tint">
               <img
+                data-parallax
                 src={j.image}
                 alt=""
-                // Six small images: load them up front so swiping never reveals a blank card.
-                loading="eager"
+                loading="lazy"
                 decoding="async"
-                className="aspect-[4/5] w-full object-cover transition-transform duration-700 ease-[var(--ease-out)] group-hover:scale-[1.04] md:h-[52svh] md:aspect-auto"
+                className="aspect-[4/5] w-full object-cover"
               />
             </div>
-            <div className="mt-5 flex items-baseline justify-between gap-4 text-[0.75rem] font-medium tracking-[0.22em] uppercase">
-              <span>{j.place}</span>
-              <span className="text-muted-foreground">{j.length}</span>
-            </div>
-            <h3 className="mt-2 text-xl leading-snug md:text-2xl">{j.title}</h3>
+            <p className="mt-5 text-sm">
+              {j.place}, {j.length}
+            </p>
+            <h3 className="mt-1 text-[1.6rem] leading-snug transition-opacity duration-300 group-hover:opacity-70">{j.title}</h3>
           </a>
         ))}
+        <div aria-hidden className="w-px shrink-0" />
+      </div>
 
-        <div aria-hidden className="w-1 shrink-0 md:w-[4vw]" />
-      </div>
-      </div>
+      <div className="mx-auto mt-8 flex max-w-[1600px] justify-end gap-2 px-5 md:px-10">
+        <button type="button" onClick={() => step(-1)} aria-label="Previous journeys" className="press p-3">
+          <ChevronLeft strokeWidth={1} className="size-7" />
+        </button>
+        <button type="button" onClick={() => step(1)} aria-label="More journeys" className="press p-3">
+          <ChevronRight strokeWidth={1} className="size-7" />
+        </button>
       </div>
     </section>
   )

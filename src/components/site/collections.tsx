@@ -1,83 +1,71 @@
-import { useRef } from 'react'
-import { gsap } from 'gsap'
-import { useGSAP } from '@gsap/react'
+import { useState } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { collections } from '@/data/site'
-import { SCENES } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 export function Collections() {
-  const root = useRef<HTMLElement>(null)
-
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia()
-      // Scene 3: the collections slide in over the intro, rising into place one after
-      // another as they come, then hold while the photos settle from a slight zoom.
-      mm.add(SCENES, () => {
-        gsap
-          .timeline({
-            defaults: { ease: 'none' },
-            scrollTrigger: { trigger: root.current, start: 'top 75%', end: 'top 0%', scrub: true },
-          })
-          .from('[data-collections-title]', { yPercent: 40, opacity: 0, duration: 0.35 })
-          .from('[data-collection]', { yPercent: 25, opacity: 0, stagger: 0.12, duration: 0.45 }, 0.1)
-        gsap.fromTo(
-          '[data-collection-photo]',
-          { scale: 1.15 },
-          {
-            scale: 1,
-            ease: 'none',
-            stagger: 0.04,
-            scrollTrigger: { trigger: root.current, start: 'top 40%', end: 'top -60%', scrub: true },
-          },
-        )
-      })
-      return () => mm.revert()
-    },
-    { scope: root },
-  )
+  const [active, setActive] = useState(0)
+  const go = (step: number) => setActive((i) => (i + step + collections.length) % collections.length)
+  const c = collections[active]
 
   return (
-    <section
-      id="collections"
-      ref={root}
-      data-scene="collections"
-      data-bg="cream"
-      // 2.6 screens on laptops: arrive, hold briefly, be covered.
-      className="relative z-20 md:-mt-[100svh] md:h-[260svh]"
-    >
-      <div data-scene-frame className="relative bg-background md:sticky md:top-0 md:flex md:h-svh md:min-h-[640px] md:flex-col md:justify-center md:overflow-hidden md:shadow-[0_-20px_50px_rgba(42,28,21,0.22)]">
-      <div data-scene-lift className="mx-auto w-full max-w-[1600px] px-5 py-24 md:px-10 md:pt-28 md:pb-10">
-        <h2 data-collections-title className="mb-10 text-[clamp(2.4rem,4.6vw,4.4rem)] leading-[1.05] md:mb-[5svh]">
-          Where would you like to be?
-        </h2>
+    <section id="collections" className="pb-[14svh]">
+      <h2 data-reveal className="px-5 pb-[7svh] text-center text-[clamp(2rem,3.2vw,2.75rem)]">
+        Where would you like to be?
+      </h2>
 
-        <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:items-start md:gap-x-6">
-          {collections.map((c, i) => (
-            <a
-              key={c.title}
-              href="#journeys"
-              data-collection
-              className={cn('group block', i % 2 === 1 && 'md:mt-[7svh]')}
-            >
-              <div className="overflow-hidden">
-                <img
-                  data-collection-photo
-                  src={c.image}
-                  alt=""
-                  decoding="async"
-                  // Photo height tracks the screen, so the row always fits within one view.
-                  className="aspect-[3/4] w-full object-cover md:aspect-auto md:h-[44svh]"
-                />
-              </div>
-              <h3 className="mt-4 text-2xl transition-colors duration-300 group-hover:text-terracotta md:text-[1.75rem]">
-                {c.title}
-              </h3>
-              <p className="mt-1 text-sm text-muted-foreground">{c.note}</p>
+      {/* A soft panel beside a large photo; the arrows step through the collections. */}
+      <div data-reveal className="grid md:min-h-[78svh] md:grid-cols-2">
+        <div className="relative order-2 flex flex-col items-center justify-center bg-tint px-8 py-16 text-center md:order-1">
+          <div key={active} className="animate-in fade-in duration-700">
+            <h3 className="text-[clamp(2rem,3vw,2.75rem)]">{c.title}</h3>
+            <p className="mx-auto mt-4 max-w-xs text-lg leading-relaxed">{c.note}</p>
+            <a href="#journeys" className="caps mt-8 inline-block">
+              <span className="link-line">See journeys</span>
             </a>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => go(-1)}
+            aria-label="Previous collection"
+            className="press absolute top-1/2 left-3 -translate-y-1/2 p-3 md:left-6"
+          >
+            <ChevronLeft strokeWidth={1} className="size-7" />
+          </button>
+          <button
+            type="button"
+            onClick={() => go(1)}
+            aria-label="Next collection"
+            className="press absolute top-1/2 right-3 -translate-y-1/2 p-3 md:right-6"
+          >
+            <ChevronRight strokeWidth={1} className="size-7" />
+          </button>
+
+          <div className="absolute bottom-8 flex gap-2.5" aria-hidden>
+            {collections.map((x, i) => (
+              <span
+                key={x.title}
+                className={cn('size-1.5 rounded-full bg-ink transition-opacity duration-500', i === active ? 'opacity-100' : 'opacity-25')}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="relative order-1 aspect-[4/5] overflow-hidden md:order-2 md:aspect-auto">
+          {collections.map((x, i) => (
+            <img
+              key={x.image}
+              src={x.image}
+              alt=""
+              decoding="async"
+              className={cn(
+                'absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ease-in-out',
+                i === active ? 'opacity-100' : 'opacity-0',
+              )}
+            />
           ))}
         </div>
-      </div>
       </div>
     </section>
   )

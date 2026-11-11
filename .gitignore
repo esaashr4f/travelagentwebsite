@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Klim test fonts: licensed for in-house mock-ups only, never commit or deploy them.
+public/fonts/klim/

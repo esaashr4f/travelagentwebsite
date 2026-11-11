@@ -1,25 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
-import { gsap } from 'gsap'
-import { useGSAP } from '@gsap/react'
+import { useEffect, useState } from 'react'
 import { brand } from '@/config/brand'
 import { heroSlides } from '@/data/site'
-import { MOTION_OK, reducedMotion } from '@/lib/motion'
+import { reducedMotion } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
-const SLIDE_MS = 4500
+const SLIDE_MS = 5000
 
 type HeroProps = {
-  // When the Higgsfield cut is ready: one pre-edited, muted MP4 (~720p, ≤6 MB) plus a
-  // poster frame. Until then the hero crossfades between stills.
+  // Optional looping clip (one muted MP4, ~720p, under ~6 MB, plus a poster frame).
+  // Without it the photo frame crossfades between stills.
   video?: { src: string; poster: string }
 }
 
 export function Hero({ video }: HeroProps) {
   const [active, setActive] = useState(0)
-  // Plays for everyone; a crossfade isn't motion in the vestibular sense, and the slow zoom
-  // follows the brand's reduce-motion choice. The Pause control covers WCAG 2.2.2.
   const [paused, setPaused] = useState(false)
-  const root = useRef<HTMLElement>(null)
 
   useEffect(() => {
     if (video || paused) return
@@ -27,28 +22,21 @@ export function Hero({ video }: HeroProps) {
     return () => clearInterval(id)
   }, [video, paused])
 
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia()
-      mm.add(MOTION_OK, () => {
-        gsap
-          .timeline({ defaults: { ease: 'power3.out' } })
-          .from('[data-hero-line]', { yPercent: 110, duration: 1.4, stagger: 0.12, delay: 0.2 })
-          .from('[data-hero-fade]', { opacity: 0, y: 12, duration: 1, stagger: 0.1 }, '-=0.8')
-      })
-      return () => mm.revert()
-    },
-    { scope: root },
-  )
-
   return (
-    // Scene 1. On laptops the section is two screens tall and its content sticks, so the
-    // intro (pulled up by one screen) slides over a hero that stays put.
-    <section id="top" ref={root} data-scene="hero" data-bg="cream" className="relative md:h-[200svh]">
-      <div data-scene-frame className="relative h-svh min-h-[560px] overflow-hidden bg-espresso text-cream md:sticky md:top-0">
-      <div data-scene-recede className="absolute inset-0">
-      {/* Separate layer for the signature transition's zoom, so it doesn't fight the Ken Burns. */}
-      <div data-hero-zoom className="absolute inset-0">
+    <section id="top" className="pt-[72px]">
+      {/* Sentinel the nav watches to know when the page has started to move. */}
+      <div id="top-sentinel" aria-hidden className="h-px" />
+
+      <div className="mx-auto max-w-3xl px-5 pt-[7svh] pb-[6svh] text-center md:pt-[9svh]">
+        <h1 data-reveal className="text-[clamp(2.4rem,4.4vw,3.9rem)] leading-[1.1] tracking-[-0.01em]">
+          Journeys, beautifully planned.
+        </h1>
+        <p data-reveal style={{ '--reveal-delay': '150ms' } as React.CSSProperties} className="mt-5 text-lg">
+          Bespoke holidays, planned personally by {brand.advisorFullName}.
+        </p>
+      </div>
+
+      <div data-reveal style={{ '--reveal-delay': '250ms' } as React.CSSProperties} className="relative h-[72svh] min-h-[420px] overflow-hidden bg-tint md:h-[78svh]">
         {video ? (
           <video
             className="h-full w-full object-cover"
@@ -69,7 +57,7 @@ export function Hero({ video }: HeroProps) {
               fetchPriority={i === 0 ? 'high' : 'low'}
               decoding="async"
               className={cn(
-                'absolute inset-0 h-full w-full object-cover transition-opacity duration-[1400ms] ease-in-out',
+                'absolute inset-0 h-full w-full object-cover transition-opacity duration-[1600ms] ease-in-out',
                 i === active ? cn('opacity-100', !reducedMotion() && 'kenburns') : 'opacity-0',
                 paused && '[animation-play-state:paused]',
               )}
@@ -77,48 +65,22 @@ export function Hero({ video }: HeroProps) {
           ))
         )}
       </div>
-      </div>
 
-      {/* Top shade keeps the nav legible over bright skies; bottom shade carries the headline. */}
-      <div data-hero-shade className="absolute inset-0 bg-gradient-to-b from-espresso/65 via-espresso/5 via-30% to-espresso/75" />
-      <div data-scene-dim className="pointer-events-none absolute inset-0 bg-espresso opacity-0" />
-
-      <div data-scene-lift className="relative mx-auto flex h-full max-w-[1600px] flex-col justify-end px-5 pb-10 md:px-10 md:pb-14">
-        <h1 className="text-[clamp(2.9rem,7.6vw,6rem)] leading-[0.98] tracking-[-0.01em]">
-          <span className="block overflow-hidden pb-[0.06em]">
-            <span data-hero-line className="block">Journeys,</span>
+      {!video && (
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-5 py-4 text-sm md:px-10">
+          <span key={active} className="animate-in fade-in duration-700">
+            {heroSlides[active].place}
           </span>
-          {/* Extra bottom room so the italic descender in "beautifully" isn't clipped by the mask. */}
-          <span className="block overflow-hidden pb-[0.14em]">
-            <span data-hero-line className="block">
-              <em className="text-sand">beautifully</em> planned.
-            </span>
-          </span>
-        </h1>
-
-        <div className="mt-8 flex flex-col gap-6 border-t border-cream/30 pt-6 md:mt-12 md:flex-row md:items-end md:justify-between">
-          <p data-hero-fade className="max-w-sm text-sm leading-relaxed text-cream/85 md:text-base">
-            Bespoke holidays, planned personally by {brand.advisorFullName}.
-          </p>
-          {!video && (
-            <div data-hero-fade className="flex items-center gap-5 text-[0.75rem] tracking-[0.22em] uppercase">
-              <span key={active} className="animate-in fade-in duration-700">
-                {heroSlides[active].place}
-              </span>
-              <button
-                type="button"
-                onClick={() => setPaused((p) => !p)}
-                aria-label={paused ? 'Play slideshow' : 'Pause slideshow'}
-                // Padding widens the hit area to 44px tall without changing the type.
-                className="group -my-3 py-3 text-cream/80 hover:text-cream"
-              >
-                <span className="link-line group-hover:[background-size:100%_1px]">{paused ? 'Play' : 'Pause'}</span>
-              </button>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={() => setPaused((p) => !p)}
+            aria-label={paused ? 'Play slideshow' : 'Pause slideshow'}
+            className="-my-3 py-3"
+          >
+            <span className="link-line">{paused ? 'Play' : 'Pause'}</span>
+          </button>
         </div>
-      </div>
-      </div>
+      )}
     </section>
   )
 }

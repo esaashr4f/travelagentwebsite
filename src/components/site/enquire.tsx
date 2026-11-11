@@ -1,14 +1,14 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { brand } from '@/config/brand'
 
-// The field's focus state is a full-strength underline in the accent colour, replacing the outline.
+// Focus thickens the underline in the ink colour instead of drawing an outline.
 const field =
-  'w-full border-0 border-b border-input bg-transparent px-0 py-2.5 text-base text-espresso placeholder:text-muted-foreground focus:border-terracotta focus:shadow-[0_1px_0_0_var(--terracotta)] focus:outline-none focus-visible:outline-none [&>option]:bg-cream [&>option]:text-espresso'
+  'w-full border-0 border-b border-line bg-transparent px-0 py-2.5 text-base text-ink placeholder:text-ink/70 focus:border-ink focus:shadow-[0_1px_0_0_var(--ink)] focus:outline-none focus-visible:outline-none [&>option]:bg-paper [&>option]:text-ink'
 
 function Field({ label, className, children }: { label: string; className?: string; children: ReactNode }) {
   return (
     <label className={'grid gap-1 ' + (className ?? '')}>
-      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className="text-sm">{label}</span>
       {children}
     </label>
   )
@@ -25,23 +25,28 @@ export function Enquire() {
   }
 
   return (
-    // Last scene. On laptops it slides over the reviews, then its frame sticks and holds for
-    // most of a screen before the page lifts to reveal the footer, so a casual scroll
-    // lands on the form rather than running past it. The form is sized to fit one screen.
-    <section id="enquire" data-scene="enquire" data-bg="cream" className="relative z-50 md:-mt-[100svh] md:h-[175svh]">
-      <div data-scene-frame className="relative bg-background md:sticky md:top-0 md:flex md:h-svh md:min-h-[640px] md:items-center md:shadow-[0_-20px_50px_rgba(42,28,21,0.3)]">
-      <div className="mx-auto w-full max-w-[1600px] px-5 py-24 md:px-10 md:pt-28 md:pb-8">
-      <div className="grid gap-14 md:grid-cols-12 md:items-center md:gap-10">
-        <div data-rise="80" className="order-2 md:order-1 md:col-span-6">
+    <section id="enquire" className="grid border-t border-line md:min-h-svh md:grid-cols-2">
+      <div className="relative min-h-[50svh] overflow-hidden bg-tint">
+        <img
+          data-parallax
+          src="/images/enquire-breakfast.webp"
+          alt="Breakfast on a terrace above the caldera in Santorini"
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      </div>
+      <div data-reveal className="flex items-center px-5 py-20 md:px-[6vw] md:py-[12svh]">
+        <div className="w-full max-w-xl">
           {sent ? (
             <div role="status" className="py-16 text-center">
               <h2 className="text-4xl">Thank you.</h2>
-              <p className="mt-4 text-muted-foreground">{brand.advisor} will be in touch within one working day.</p>
+              <p className="mt-4">{brand.advisor} will be in touch within one working day.</p>
             </div>
           ) : (
             <>
-              <h2 className="text-[clamp(2.1rem,min(3.4vw,5.6svh),3.4rem)] leading-[1.05]">
-                Tell {brand.advisor} where you are dreaming of.
+              <h2 className="text-[clamp(2rem,3vw,2.75rem)] leading-[1.15]">
+                Tell {brand.advisor} where you would like to go.
               </h2>
 
               <form onSubmit={onSubmit} className="mt-8 grid gap-x-6 gap-y-6 sm:grid-cols-2 md:mt-[4svh] md:grid-cols-6 md:gap-y-[2.6svh]">
@@ -113,31 +118,18 @@ export function Enquire() {
                 <div className="flex flex-col gap-5 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between md:order-3 md:col-span-6">
                   <button
                     type="submit"
-                    className="press bg-terracotta px-9 py-4 text-[0.75rem] font-medium tracking-[0.22em] text-cream uppercase hover:bg-espresso"
+                    className="press caps border border-ink bg-ink px-9 py-4 text-paper hover:bg-paper hover:text-ink"
                   >
                     Send enquiry
                   </button>
-                  <a href={brand.whatsapp} className="link-line self-start text-sm text-muted-foreground sm:self-auto">
-                    Or message on WhatsApp
+                  <a href={brand.whatsapp} className="self-start text-sm sm:self-auto">
+                    <span className="link-line">Or message on WhatsApp</span>
                   </a>
                 </div>
               </form>
             </>
           )}
         </div>
-
-        <div data-unveil className="order-1 overflow-hidden md:order-2 md:col-span-5 md:col-start-8">
-          <div className="overflow-hidden">
-          <img
-            src="/images/enquire-breakfast.webp"
-            alt="Breakfast on a terrace above the caldera in Santorini"
-            decoding="async"
-            className="aspect-[4/3] w-full object-cover md:aspect-auto md:h-[64svh]"
-          />
-          </div>
-        </div>
-      </div>
-      </div>
       </div>
     </section>
   )

@@ -1,80 +1,35 @@
-import { useLayoutEffect, useRef } from 'react'
 import { brand, brandName } from '@/config/brand'
 import { Wordmark } from './wordmark'
 
 const YEAR = new Date().getFullYear()
 
-const columns = [
-  {
-    title: 'Explore',
-    links: [
-      { label: 'Signature journeys', href: '#journeys' },
-      { label: 'Collections', href: '#collections' },
-      { label: 'About', href: '#about' },
-      { label: 'Enquire', href: '#enquire' },
-    ],
-  },
-  {
-    title: 'Contact',
-    links: [
-      { label: brand.email, href: `mailto:${brand.email}` },
-      { label: 'WhatsApp', href: brand.whatsapp },
-    ],
-  },
-  {
-    title: 'Follow',
-    links: [{ label: 'Instagram', href: brand.instagram }],
-  },
+const links = [
+  { label: 'Journeys', href: '#journeys' },
+  { label: 'Collections', href: '#collections' },
+  { label: 'Reviews', href: '#reviews' },
+  { label: 'Enquire', href: '#enquire' },
+  { label: 'Instagram', href: brand.instagram },
+  { label: brand.email, href: `mailto:${brand.email}` },
 ]
 
 export function Footer() {
-  const ref = useRef<HTMLElement>(null)
-
-  // Curtain reveal on laptops: the footer sits fixed underneath and the page lifts away
-  // to uncover it. Its height is published so the page can leave exactly that much room.
-  useLayoutEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const publish = () => document.documentElement.style.setProperty('--footer-h', `${el.offsetHeight}px`)
-    publish()
-    const ro = new ResizeObserver(publish)
-    ro.observe(el)
-    return () => ro.disconnect()
-  }, [])
-
   return (
-    <footer ref={ref} className="bg-espresso text-cream md:fixed md:inset-x-0 md:bottom-0 md:z-0">
-      <div className="mx-auto max-w-[1600px] px-5 pt-24 pb-10 md:px-10">
-        <div className="grid gap-14 md:grid-cols-12">
-          <div className="md:col-span-5">
-            <Wordmark className="text-2xl" />
-          </div>
-          {columns.map((col) => (
-            <div key={col.title} className="md:col-span-2">
-              <p className="eyebrow text-cream/50">{col.title}</p>
-              <ul className="mt-5 grid gap-3 text-sm">
-                {col.links.map((l) => (
-                  <li key={l.label}>
-                    <a
-                      href={l.href}
-                      className="link-line break-words"
-                      {...(l.href.startsWith('http') && { target: '_blank', rel: 'noreferrer' })}
-                    >
-                      {l.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-24 flex flex-col gap-4 border-t border-cream/15 pt-8 text-xs text-cream/50 md:flex-row md:justify-between">
-          <p>
-            © {YEAR} {brandName}. {brand.legal}
-          </p>
-          <p>{brand.protection}</p>
-        </div>
+    <footer className="border-t border-line px-5 pt-20 pb-10 text-center md:px-10">
+      <Wordmark className="text-[1.1rem]" />
+      <ul className="mt-12 flex flex-wrap justify-center gap-x-10 gap-y-4">
+        {links.map((l) => (
+          <li key={l.label}>
+            <a href={l.href} className="link-line">
+              {l.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-16 flex flex-col gap-2 text-sm md:flex-row md:justify-center md:gap-6">
+        <p>
+          © {YEAR} {brandName}. {brand.legal}
+        </p>
+        <p>{brand.protection}</p>
       </div>
     </footer>
   )

@@ -14,10 +14,10 @@ export const heroSlides: HeroSlide[] = [
 export type Collection = { title: string; note: string; image: string }
 
 export const collections: Collection[] = [
-  { title: 'City Glamour', note: 'Skyline suites, rooftop dinners', image: '/images/city-dubai.webp' },
-  { title: 'Into the Wild', note: 'Desert, savannah, silence', image: '/images/wild-sossusvlei.webp' },
-  { title: 'Sun & Sea', note: 'Long lunches by the water', image: '/images/sea-positano.webp' },
-  { title: 'Grand Occasions', note: 'Formula 1, festivals, firsts', image: '/images/events-singapore.webp' },
+  { title: 'City Glamour', note: 'Skyline suites, rooftop dinners and cities that come alive after dark.', image: '/images/city-dubai.webp' },
+  { title: 'Into the Wild', note: 'Red dunes, open plains and lodges a long way from anywhere.', image: '/images/wild-sossusvlei.webp' },
+  { title: 'Sun & Sea', note: 'Rooms that open onto the water and lunches that run into the evening.', image: '/images/sea-positano.webp' },
+  { title: 'Grand Occasions', note: 'Race weekends, festivals and milestones, arranged around the moment.', image: '/images/events-singapore.webp' },
 ]
 
 export type Journey = { place: string; title: string; length: string; image: string }

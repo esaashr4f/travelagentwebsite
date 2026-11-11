@@ -1,84 +1,88 @@
 import { useEffect, useState } from 'react'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { brandName } from '@/config/brand'
+import { getLenis } from '@/hooks/use-smooth-scroll'
 import { cn } from '@/lib/utils'
 import { Wordmark } from './wordmark'
 
 const links = [
-  { label: 'Journeys', href: '#journeys' },
+  { label: 'Signature journeys', href: '#journeys' },
   { label: 'Collections', href: '#collections' },
-  { label: 'About', href: '#about' },
+  { label: 'Reviews', href: '#reviews' },
+  { label: 'Enquire', href: '#enquire' },
 ]
 
 export function Nav() {
-  const [scrolled, setScrolled] = useState(false)
+  const [compact, setCompact] = useState(false)
   const [open, setOpen] = useState(false)
 
+  // The logo settles smaller once the page moves. A one-pixel sentinel at the top of the
+  // page tells us when that happens, without listening to every scroll event.
   useEffect(() => {
-    // Transparent over the hero photo, solid once the section after it reaches the bar.
-    // (The hero stays pinned on laptops while the intro slides over it, so we watch the
-    // intro, not the hero.) ScrollTrigger only fires when that boundary is crossed.
-    // Only the crossing matters, so no end point: sections that resize later can't move it.
-    const st = ScrollTrigger.create({
-      trigger: '[data-after-hero]',
-      start: 'top 96px',
-      onEnter: () => setScrolled(true),
-      onLeaveBack: () => setScrolled(false),
-    })
-    return () => st.kill()
+    const sentinel = document.getElementById('top-sentinel')
+    if (!sentinel) return
+    const io = new IntersectionObserver(([e]) => setCompact(!e.isIntersecting))
+    io.observe(sentinel)
+    return () => io.disconnect()
   }, [])
 
-  const light = !scrolled && !open
+  // Freeze the page under the open menu, and let Escape close it.
+  useEffect(() => {
+    const lenis = getLenis()
+    if (open) lenis?.stop()
+    else lenis?.start()
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
 
   return (
     <header
       className={cn(
-        'fixed inset-x-0 top-0 z-50 transition-colors duration-500',
-        // Solid rather than blurred: a backdrop blur repaints every frame over moving photos.
-        scrolled && !open ? 'border-b border-border bg-cream/[0.97]' : 'bg-transparent',
-        light ? 'text-cream' : 'text-espresso',
+        'fixed inset-x-0 top-0 z-50 bg-paper transition-[border-color] duration-500',
+        compact && !open ? 'border-b border-line' : 'border-b border-transparent',
       )}
     >
-      <nav className="mx-auto grid h-20 max-w-[1600px] grid-cols-[1fr_auto_1fr] items-center px-5 md:h-24 md:px-10">
-        <ul className="hidden gap-6 text-[0.72rem] font-medium tracking-[0.22em] uppercase md:flex lg:gap-9">
-          {links.map((l) => (
-            <li key={l.href}>
-              <a href={l.href} className="link-line">
-                {l.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+      <nav className="mx-auto grid h-[72px] max-w-[1600px] grid-cols-[1fr_auto_1fr] items-center px-5 md:px-10">
         <button
           type="button"
-          className="justify-self-start text-[0.72rem] font-medium tracking-[0.22em] uppercase md:hidden"
-          aria-expanded={open}
           onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          aria-controls="site-menu"
+          className="caps justify-self-start py-3"
         >
-          {open ? 'Close' : 'Menu'}
+          <span className="link-line">{open ? 'Close' : 'Menu'}</span>
         </button>
 
-        <a href="#top" aria-label={`${brandName}, back to top`} className="text-[0.95rem] md:text-[1.1rem]">
-          <Wordmark />
-        </a>
-
         <a
-          href="#enquire"
+          href="#top"
+          onClick={() => setOpen(false)}
+          aria-label={`${brandName}, back to top`}
           className={cn(
-            'press justify-self-end border px-4 py-2.5 text-[0.75rem] font-medium tracking-[0.22em] whitespace-nowrap uppercase md:px-6 md:py-3',
-            light
-              ? 'border-cream/70 hover:bg-cream hover:text-espresso'
-              : 'border-espresso/80 hover:bg-espresso hover:text-cream',
+            'origin-top transition-transform duration-700 ease-[var(--ease-out)]',
+            compact ? 'scale-100' : 'scale-[1.18] md:scale-[1.3]',
           )}
         >
-          Enquire
+          <Wordmark className="text-[0.9rem]" />
+        </a>
+
+        <a href="#enquire" onClick={() => setOpen(false)} className="caps justify-self-end py-3">
+          <span className="link-line">Enquire</span>
         </a>
       </nav>
 
       {open && (
-        <div className="fixed inset-0 top-20 z-40 flex flex-col gap-8 overscroll-contain bg-cream px-5 pt-12 md:hidden">
+        <div
+          id="site-menu"
+          className="fixed inset-x-0 top-[72px] bottom-0 flex flex-col items-center justify-center gap-6 overscroll-contain bg-paper animate-in fade-in duration-500"
+        >
           {links.map((l) => (
-            <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="font-heading text-4xl">
+            <a
+              key={l.href}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              className="text-[clamp(2rem,4vw,3.25rem)] font-light transition-opacity duration-300 hover:opacity-60"
+            >
               {l.label}
             </a>
           ))}

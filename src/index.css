@@ -1,143 +1,97 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "@fontsource-variable/bodoni-moda";
-@import "@fontsource-variable/bodoni-moda/wght-italic.css";
-@import "@fontsource-variable/jost";
+@import "@fontsource-variable/newsreader/opsz.css";
+@import "@fontsource-variable/newsreader/opsz-italic.css";
+
+/* Design tokens. The look is deliberately spare: one serif family, one ink colour for every
+   word, a near-white page and one soft tint for panels. The photography supplies the colour.
+   Swap these per client. */
+/* Optional: Klim's Epicene test fonts, used only if you place them locally in
+   public/fonts/klim/ (git-ignored; the test licence forbids distributing them). Without
+   them the page falls back to Newsreader, a free serif in the same spirit. */
+@font-face {
+  font-family: 'Epicene Display Local';
+  src: url('/fonts/klim/epicene-display.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Epicene Text Local';
+  src: url('/fonts/klim/epicene-text.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
 
 @theme inline {
-    --font-heading: 'Bodoni Moda Variable', 'Bodoni 72', Didot, serif;
-    --font-sans: 'Jost Variable', 'Futura', sans-serif;
-    --color-cream: var(--cream);
-    --color-sand: var(--sand);
-    --color-terracotta: var(--terracotta);
-    --color-espresso: var(--espresso);
-    --color-gold: var(--gold);
-    --color-ring: var(--ring);
-    --color-input: var(--input);
-    --color-border: var(--border);
-    --color-destructive: var(--destructive);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-accent: var(--accent);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-muted: var(--muted);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-secondary: var(--secondary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-primary: var(--primary);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-popover: var(--popover);
-    --color-card-foreground: var(--card-foreground);
-    --color-card: var(--card);
-    --color-foreground: var(--foreground);
-    --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
+  --font-serif: 'Epicene Text Local', 'Newsreader Variable', 'Iowan Old Style', Georgia, serif;
+  --font-display: 'Epicene Display Local', 'Newsreader Variable', 'Iowan Old Style', Georgia, serif;
+  --color-paper: var(--paper);
+  --color-tint: var(--tint);
+  --color-ink: var(--ink);
+  --color-line: var(--line);
 }
 
 :root {
-    /* Palette: sun-warmed Mediterranean (cream, sand, terracotta, espresso). Swap per client. */
-    --cream: #f6efe4;
-    --sand: #e9dcc8;
-    --terracotta: #b2502c;
-    --espresso: #2a1c15;
-    --gold: #b8935a;
-
-    --background: var(--cream);
-    --foreground: var(--espresso);
-    --card: #fbf7f0;
-    --card-foreground: var(--espresso);
-    --popover: #fbf7f0;
-    --popover-foreground: var(--espresso);
-    --primary: var(--terracotta);
-    --primary-foreground: var(--cream);
-    --secondary: var(--sand);
-    --secondary-foreground: var(--espresso);
-    --muted: var(--sand);
-    /* 5.97:1 on cream, 5.05:1 on sand: clears WCAG AA for body text on both surfaces. */
-    --muted-foreground: #6b5747;
-    --accent: var(--sand);
-    --accent-foreground: var(--espresso);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: #d9c7ad;
-    --input: #cdb898;
-    --ring: var(--gold);
-    --radius: 0rem;
-
-    /* Motion: strong ease-out for UI responses (Emil Kowalski's curve). */
-    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --paper: #f7f6f2;
+  --tint: #ebe8e1;
+  /* Deep Aegean blue: 11:1 on paper, 9.8:1 on tint. */
+  --ink: #1d3a4a;
+  --line: color-mix(in srgb, var(--ink) 22%, transparent);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
-
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-    }
-  body {
-    @apply bg-background text-foreground;
-    }
-  html {
-    @apply font-sans antialiased;
-    }
   html {
     color-scheme: light;
-    }
-  /* Nothing may push the page sideways (Windows scrollbars made pinned scenes overflow). */
-  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-serif);
+    /* The variable font switches between its display and text cuts by size. */
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
     overflow-x: clip;
-    }
+  }
+  body {
+    overflow-x: clip;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 300;
+    text-wrap: balance;
+  }
   p {
     text-wrap: pretty;
-    }
-  h1, h2, h3, h4 {
-    @apply font-heading font-normal;
-    text-wrap: balance;
-    }
-  /* Anchored sections clear the fixed header when jumped to without Lenis. */
-  [id] {
-    scroll-margin-top: 6rem;
-    }
-  a, button, summary {
-    touch-action: manipulation;
-    }
-  ::selection {
-    @apply bg-terracotta text-cream;
-    }
-  /* Browser surfaces carry the palette too: caret, focus ring and scrollbar. */
-  input, textarea {
-    caret-color: var(--terracotta);
-    }
-  :focus-visible {
-    outline: 2px solid var(--terracotta);
-    outline-offset: 3px;
-    }
-  html {
-    scrollbar-color: color-mix(in srgb, var(--espresso) 35%, transparent) var(--cream);
-    }
-}
-@layer components {
-  .eyebrow {
-    @apply text-[0.75rem] font-medium tracking-[0.24em] uppercase;
   }
-  /* Hairline underline that draws in from the left on hover. */
+  ::selection {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  input, textarea {
+    caret-color: var(--ink);
+  }
+  :focus-visible {
+    outline: 1.5px solid var(--ink);
+    outline-offset: 4px;
+  }
+  a, button {
+    touch-action: manipulation;
+  }
+  [id] {
+    scroll-margin-top: 5rem;
+  }
+}
+
+@layer components {
+  /* Small capitals for the few functional labels (nav, buttons): never above headings. */
+  .caps {
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
   .link-line {
     background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
     padding-bottom: 2px;
     transition: background-size 0.45s var(--ease-out);
-  }
-  /* Pressable controls give a small physical response. */
-  .press {
-    transition-property: transform, background-color, color, border-color;
-    transition-duration: 160ms;
-    transition-timing-function: var(--ease-out);
-  }
-  .press:active {
-    transform: scale(0.97);
   }
   @media (hover: hover) and (pointer: fine) {
     .link-line:hover {
@@ -147,52 +101,40 @@
   .link-line:focus-visible {
     background-size: 100% 1px;
   }
+  .press {
+    transition-property: transform, background-color, color;
+    transition-duration: 160ms;
+    transition-timing-function: var(--ease-out);
+  }
+  .press:active {
+    transform: scale(0.97);
+  }
+
+  /* Entrance: each block settles up 48px and fades in, once, as it comes into view.
+     A plain transition rather than a scroll-tied one, so it can never stutter. */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(48px);
+    transition:
+      opacity 1.1s var(--ease-out),
+      transform 1.4s var(--ease-out);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+  .no-motion [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 @keyframes kenburns {
-  from { transform: scale(1.12); }
+  from { transform: scale(1.08); }
   to { transform: scale(1); }
 }
 .kenburns {
-  animation: kenburns 8s ease-out forwards;
-}
-
-
-/* ── Scene transitions (laptops). The markup is built for 'slide': each scene is pulled up
-   a screen and its frame is sticky, so it covers the one before. The other modes reshape
-   that here; their motion lives in src/hooks/use-scene-covers.ts. ── */
-@media (min-width: 768px) {
-  /* dissolve: same stacking, but scenes fade up in place, so no edge shadows. */
-  [data-transition='dissolve'] [data-scene-frame] {
-    box-shadow: none !important;
-  }
-
-  /* canvas, and signature after its opening: one flowing page. Scenes stop overlapping,
-     only the journeys row, the reviews and the enquiry hold still stay sticky, and frames
-     go transparent so the page colour can shift between sections. */
-  [data-transition='canvas'] [data-scene],
-  [data-transition='signature'] [data-scene]:not([data-scene='hero'], [data-scene='intro']) {
-    margin-top: 0 !important;
-  }
-  [data-transition='canvas'] :is([data-scene='hero'], [data-scene='intro'], [data-scene='collections']),
-  [data-transition='signature'] [data-scene='collections'] {
-    height: auto !important;
-  }
-  [data-transition='canvas'] :is([data-scene='hero'], [data-scene='intro'], [data-scene='collections']) > [data-scene-frame],
-  [data-transition='signature'] [data-scene='collections'] > [data-scene-frame] {
-    position: relative !important;
-  }
-  [data-transition='canvas'] [data-scene]:not([data-scene='hero']) > [data-scene-frame],
-  [data-transition='signature'] [data-scene]:not([data-scene='hero']) > [data-scene-frame] {
-    background: transparent !important;
-    box-shadow: none !important;
-  }
-  /* No one is covering the reviews any more, so they need no extra screen at the end. */
-  :is([data-transition='canvas'], [data-transition='signature']) [data-scene='reviews'] {
-    height: 300svh !important;
-  }
-  /* signature: the intro holds for its own animation, then scrolls on. */
-  [data-transition='signature'] [data-scene='intro'] {
-    height: 200svh !important;
-  }
+  animation: kenburns 9s ease-out forwards;
 }
