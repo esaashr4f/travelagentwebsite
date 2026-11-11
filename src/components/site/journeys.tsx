@@ -38,7 +38,7 @@ export function Journeys() {
     <>
       <div>
         <h2 className="text-[clamp(2.4rem,3.6vw,3.8rem)] leading-[1.04]">
-          Itineraries {brand.advisor} <em>loves</em> to send people on.
+          Itineraries {brand.advisor} loves to send people on.
         </h2>
         <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
           Each one is a starting point, rewritten around whoever is travelling.
@@ -48,7 +48,7 @@ export function Journeys() {
   )
 
   return (
-    <section id="journeys" ref={root} className="overflow-hidden bg-sand py-24 md:flex md:h-svh md:items-center md:py-0 md:pt-24">
+    <section id="journeys" ref={root} className="relative z-10 overflow-hidden bg-sand py-24 md:flex md:h-svh md:items-center md:py-0 md:pt-24">
       {/* scroll-px-5 makes snapping respect the side padding, so the first card keeps its margin. */}
       <div
         ref={track}
@@ -74,7 +74,7 @@ export function Journeys() {
                 className="aspect-[4/5] w-full object-cover transition-transform duration-700 ease-[var(--ease-out)] group-hover:scale-[1.04] md:h-[52svh] md:aspect-auto"
               />
             </div>
-            <div className="mt-5 flex items-baseline justify-between gap-4 text-[0.68rem] font-medium tracking-[0.22em] uppercase">
+            <div className="mt-5 flex items-baseline justify-between gap-4 text-[0.75rem] font-medium tracking-[0.22em] uppercase">
               <span>{j.place}</span>
               <span className="text-muted-foreground">{j.length}</span>
             </div>

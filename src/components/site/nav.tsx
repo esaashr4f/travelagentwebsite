@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { brandName } from '@/config/brand'
 import { cn } from '@/lib/utils'
 import { Wordmark } from './wordmark'
@@ -14,15 +15,16 @@ export function Nav() {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    // Transparent over the hero photo, solid cream once it has been scrolled past. An
-    // observer (rather than a scroll listener) only fires when the hero crosses the bar.
-    const hero = document.querySelector<HTMLElement>('[data-page-hero]')
-    if (!hero) return
-    const io = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting), {
-      rootMargin: '-96px 0px 0px 0px',
+    // Transparent over the hero photo, solid once the section after it reaches the bar.
+    // (The hero stays pinned on laptops while the intro slides over it, so we watch the
+    // intro, not the hero.) ScrollTrigger only fires when that boundary is crossed.
+    const st = ScrollTrigger.create({
+      trigger: '[data-after-hero]',
+      start: 'top 96px',
+      onToggle: (self) => setScrolled(self.isActive),
+      end: 'max',
     })
-    io.observe(hero)
-    return () => io.disconnect()
+    return () => st.kill()
   }, [])
 
   const light = !scrolled && !open
@@ -61,7 +63,7 @@ export function Nav() {
         <a
           href="#enquire"
           className={cn(
-            'press justify-self-end border px-4 py-2.5 text-[0.68rem] font-medium tracking-[0.22em] whitespace-nowrap uppercase md:px-6 md:py-3',
+            'press justify-self-end border px-4 py-2.5 text-[0.75rem] font-medium tracking-[0.22em] whitespace-nowrap uppercase md:px-6 md:py-3',
             light
               ? 'border-cream/70 hover:bg-cream hover:text-espresso'
               : 'border-espresso/80 hover:bg-espresso hover:text-cream',

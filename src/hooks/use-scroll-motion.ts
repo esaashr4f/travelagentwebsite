@@ -8,6 +8,7 @@ gsap.registerPlugin(ScrollTrigger)
 // Scroll-linked motion for a page, driven by data attributes so sections stay declarative:
 //   data-parallax="8"  image drifts against the scroll inside its overflow-hidden frame
 //   data-rise="120"    block rises (and fades up) as it enters, tied to scroll position
+//   data-clip-reveal   frame unveils from the bottom as it enters
 // Everything is scrubbed, so it moves with the scrollbar and reverses on the way back up.
 // Desktop only, and off for reduced motion.
 export function useScrollMotion(scope: RefObject<HTMLElement | null>) {
@@ -25,6 +26,18 @@ export function useScrollMotion(scope: RefObject<HTMLElement | null>) {
               yPercent: amount,
               ease: 'none',
               scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true },
+            },
+          )
+        })
+
+        gsap.utils.toArray<HTMLElement>('[data-clip-reveal]').forEach((el) => {
+          gsap.fromTo(
+            el,
+            { clipPath: 'inset(100% 0 0 0)' },
+            {
+              clipPath: 'inset(0% 0 0 0)',
+              ease: 'none',
+              scrollTrigger: { trigger: el, start: 'top 95%', end: 'top 35%', scrub: 0.6 },
             },
           )
         })

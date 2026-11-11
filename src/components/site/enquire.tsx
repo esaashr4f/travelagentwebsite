@@ -25,9 +25,10 @@ export function Enquire() {
   }
 
   return (
-    <section id="enquire" className="mx-auto max-w-[1600px] px-5 py-24 md:px-10 md:py-40">
+    <section id="enquire" className="relative z-10 bg-background md:flex md:min-h-svh md:items-center">
+      <div className="mx-auto w-full max-w-[1600px] px-5 py-24 md:px-10 md:pt-32 md:pb-16">
       <div className="grid gap-14 md:grid-cols-12 md:items-center md:gap-10">
-        <div className="order-2 md:order-1 md:col-span-6">
+        <div data-rise="80" className="order-2 md:order-1 md:col-span-6">
           {sent ? (
             <div role="status" className="py-16 text-center">
               <h2 className="text-4xl">Thank you.</h2>
@@ -36,7 +37,7 @@ export function Enquire() {
           ) : (
             <>
               <h2 className="text-[clamp(2.2rem,3.6vw,3.4rem)] leading-[1.05]">
-                Tell {brand.advisor} where you are <em>dreaming</em> of.
+                Tell {brand.advisor} where you are dreaming of.
               </h2>
 
               <form onSubmit={onSubmit} className="mt-10 grid gap-x-6 gap-y-7 sm:grid-cols-2">
@@ -108,7 +109,7 @@ export function Enquire() {
                 <div className="flex flex-col gap-5 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
                   <button
                     type="submit"
-                    className="press bg-terracotta px-9 py-4 text-[0.7rem] font-medium tracking-[0.22em] text-cream uppercase hover:bg-espresso"
+                    className="press bg-terracotta px-9 py-4 text-[0.75rem] font-medium tracking-[0.22em] text-cream uppercase hover:bg-espresso"
                   >
                     Send enquiry
                   </button>
@@ -121,15 +122,16 @@ export function Enquire() {
           )}
         </div>
 
-        <div className="order-1 overflow-hidden md:order-2 md:col-span-5 md:col-start-8">
+        <div data-clip-reveal className="order-1 overflow-hidden md:order-2 md:col-span-5 md:col-start-8">
           <img
             data-parallax="6"
             src="/images/enquire-breakfast.webp"
             alt="Breakfast on a terrace above the caldera in Santorini"
             loading="lazy"
-            className="aspect-[4/3] w-full object-cover md:aspect-[4/5]"
+            className="aspect-[4/3] w-full object-cover md:aspect-auto md:h-[68svh]"
           />
         </div>
+      </div>
       </div>
     </section>
   )

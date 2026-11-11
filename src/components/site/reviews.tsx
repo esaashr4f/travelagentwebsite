@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SplitText } from 'gsap/SplitText'
+import { useGSAP } from '@gsap/react'
 import { reviews } from '@/data/site'
-import { reducedMotion } from '@/lib/motion'
+import { getLenis } from '@/hooks/use-smooth-scroll'
+import { reducedMotion, SCENES } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
-gsap.registerPlugin(SplitText)
+gsap.registerPlugin(ScrollTrigger, SplitText)
 
 const ROTATE_MS = 9000
 
@@ -19,6 +22,37 @@ export function Reviews() {
   const [inView, setInView] = useState(false)
   const ref = useRef<HTMLElement>(null)
   const quote = useRef<HTMLParagraphElement>(null)
+  // On laptops the section is a pinned scene and scrolling steps through the reviews.
+  const scene = useRef<ScrollTrigger | null>(null)
+  const last = reviews.length - 1
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia()
+      mm.add(SCENES, () => {
+        const st = ScrollTrigger.create({
+          trigger: ref.current,
+          start: 'top top',
+          end: `+=${last * 80}%`,
+          pin: true,
+          onUpdate: (self) => setActive(Math.min(last, Math.round(self.progress * last))),
+        })
+        scene.current = st
+        setAuto(false)
+        gsap.fromTo(
+          '[data-review-photos]',
+          { scale: 1.14 },
+          { scale: 1, ease: 'none', scrollTrigger: { trigger: ref.current, start: 'top bottom', end: () => st.end, scrub: true } },
+        )
+        return () => {
+          scene.current = null
+          setAuto(!reducedMotion())
+        }
+      })
+      return () => mm.revert()
+    },
+    { scope: ref },
+  )
 
   // Start rotating (and animating) only once the section is properly on screen.
   useEffect(() => {
@@ -53,6 +87,16 @@ export function Reviews() {
   }, [active, inView, auto, hovered, focused])
 
   const go = (step: number) => {
+    const st = scene.current
+    if (st) {
+      // Scroll-driven: glide the page to the point where that review is showing.
+      const target = Math.max(0, Math.min(last, active + step))
+      const y = st.start + ((st.end - st.start) * target) / last
+      const lenis = getLenis()
+      if (lenis) lenis.scrollTo(y)
+      else window.scrollTo({ top: y })
+      return
+    }
     setAuto(false)
     setActive((i) => (i + step + reviews.length) % reviews.length)
   }
@@ -70,11 +114,11 @@ export function Reviews() {
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false)
       }}
-      className="bg-espresso text-cream"
+      className="relative z-10 bg-espresso text-cream"
     >
-      <div className="mx-auto grid max-w-[1600px] md:min-h-[86svh] md:grid-cols-2">
+      <div className="mx-auto grid max-w-[1600px] md:h-svh md:min-h-[600px] md:grid-cols-2">
         <div className="relative hidden overflow-hidden md:block">
-          <div data-parallax="5" className="absolute inset-0">
+          <div data-review-photos className="absolute inset-0">
           {reviews.map((r, i) => (
             <img
               key={r.image}
@@ -90,7 +134,7 @@ export function Reviews() {
           </div>
         </div>
 
-        <figure className="flex flex-col justify-between gap-14 px-5 py-16 md:px-16 md:py-20 lg:px-24">
+        <figure className="flex flex-col justify-between gap-14 px-5 py-16 md:px-16 md:pt-32 md:pb-12 lg:px-24">
           <div className="my-auto">
             <span aria-hidden className="block font-heading text-[7rem] leading-[0.6] text-terracotta">
               “
@@ -109,7 +153,7 @@ export function Reviews() {
             </figcaption>
           </div>
 
-          <div className="flex justify-end gap-8 border-t border-cream/15 pt-3 text-[0.68rem] font-medium tracking-[0.22em] uppercase">
+          <div className="flex justify-end gap-8 border-t border-cream/15 pt-3 text-[0.75rem] font-medium tracking-[0.22em] uppercase">
             {[
               { label: 'Previous', step: -1 },
               { label: 'Next', step: 1 },

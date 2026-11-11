@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from 'react'
 import { brand, brandName } from '@/config/brand'
 import { Wordmark } from './wordmark'
 
@@ -27,8 +28,22 @@ const columns = [
 ]
 
 export function Footer() {
+  const ref = useRef<HTMLElement>(null)
+
+  // Curtain reveal on laptops: the footer sits fixed underneath and the page lifts away
+  // to uncover it. Its height is published so the page can leave exactly that much room.
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const publish = () => document.documentElement.style.setProperty('--footer-h', `${el.offsetHeight}px`)
+    publish()
+    const ro = new ResizeObserver(publish)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
   return (
-    <footer className="bg-espresso text-cream">
+    <footer ref={ref} className="bg-espresso text-cream md:fixed md:inset-x-0 md:bottom-0 md:z-0">
       <div className="mx-auto max-w-[1600px] px-5 pt-24 pb-10 md:px-10">
         <div className="grid gap-14 md:grid-cols-12">
           <div className="md:col-span-5">

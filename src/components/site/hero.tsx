@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { brand } from '@/config/brand'
 import { heroSlides } from '@/data/site'
-import { MOTION_OK } from '@/lib/motion'
+import { MOTION_OK, SCENES } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 const SLIDE_MS = 4500
@@ -36,12 +37,16 @@ export function Hero({ video }: HeroProps) {
           .from('[data-hero-line]', { yPercent: 110, duration: 1.4, stagger: 0.12, delay: 0.2 })
           .from('[data-hero-fade]', { opacity: 0, y: 12, duration: 1, stagger: 0.1 }, '-=0.8')
 
-        // Media drifts up slower than the page for a little depth on the way out.
-        gsap.to('[data-hero-media]', {
-          yPercent: 12,
-          ease: 'none',
-          scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
-        })
+      })
+
+      // Scene 1 → 2: the hero holds still while the intro slides up over it like a sheet,
+      // and recedes as it goes (settles back, dims, its words lift away).
+      mm.add(SCENES, () => {
+        const cover = { trigger: root.current, start: 'top top', end: '+=100%', scrub: true }
+        ScrollTrigger.create({ ...cover, pin: true, pinSpacing: false })
+        gsap.to('[data-hero-media]', { scale: 0.94, yPercent: 6, ease: 'none', scrollTrigger: cover })
+        gsap.to('[data-hero-copy]', { yPercent: -18, opacity: 0, ease: 'none', scrollTrigger: { ...cover, end: '+=60%' } })
+        gsap.to('[data-hero-dim]', { opacity: 0.65, ease: 'none', scrollTrigger: cover })
       })
       return () => mm.revert()
     },
@@ -49,7 +54,7 @@ export function Hero({ video }: HeroProps) {
   )
 
   return (
-    <section id="top" ref={root} data-page-hero className="relative h-svh min-h-[560px] overflow-hidden bg-espresso text-cream">
+    <section id="top" ref={root} data-page-hero className="relative z-0 h-svh min-h-[560px] overflow-hidden bg-espresso text-cream">
       <div data-hero-media className="absolute inset-0">
         {video ? (
           <video
@@ -80,9 +85,11 @@ export function Hero({ video }: HeroProps) {
         )}
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-espresso/45 via-transparent to-espresso/70" />
+      {/* Top shade keeps the nav legible over bright skies; bottom shade carries the headline. */}
+      <div className="absolute inset-0 bg-gradient-to-b from-espresso/65 via-espresso/5 via-30% to-espresso/75" />
+      <div data-hero-dim className="pointer-events-none absolute inset-0 bg-espresso opacity-0" />
 
-      <div className="relative mx-auto flex h-full max-w-[1600px] flex-col justify-end px-5 pb-10 md:px-10 md:pb-14">
+      <div data-hero-copy className="relative mx-auto flex h-full max-w-[1600px] flex-col justify-end px-5 pb-10 md:px-10 md:pb-14">
         <h1 className="text-[clamp(2.9rem,7.6vw,6rem)] leading-[0.98] tracking-[-0.01em]">
           <span className="block overflow-hidden pb-[0.06em]">
             <span data-hero-line className="block">Journeys,</span>
@@ -100,7 +107,7 @@ export function Hero({ video }: HeroProps) {
             Bespoke holidays, planned personally by {brand.advisorFullName}.
           </p>
           {!video && (
-            <div data-hero-fade className="flex items-center gap-5 text-[0.68rem] tracking-[0.22em] uppercase">
+            <div data-hero-fade className="flex items-center gap-5 text-[0.75rem] tracking-[0.22em] uppercase">
               <span key={active} className="animate-in fade-in duration-700">
                 {heroSlides[active].place}
               </span>

@@ -17,7 +17,7 @@ export default function Home() {
   }, [])
 
   return (
-    <main id="main" ref={root} tabIndex={-1} className="outline-none">
+    <main id="main" ref={root} tabIndex={-1} className="relative z-10 bg-background outline-none md:mb-[var(--footer-h)]">
       <Hero />
       <Intro />
       <Collections />

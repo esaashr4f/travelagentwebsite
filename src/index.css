@@ -87,6 +87,13 @@
   html {
     color-scheme: light;
     }
+  /* Nothing may push the page sideways (Windows scrollbars made pinned scenes overflow). */
+  html, body {
+    overflow-x: clip;
+    }
+  p {
+    text-wrap: pretty;
+    }
   h1, h2, h3, h4 {
     @apply font-heading font-normal;
     text-wrap: balance;
@@ -115,7 +122,7 @@
 }
 @layer components {
   .eyebrow {
-    @apply text-[0.68rem] font-medium tracking-[0.24em] uppercase;
+    @apply text-[0.75rem] font-medium tracking-[0.24em] uppercase;
   }
   /* Hairline underline that draws in from the left on hover. */
   .link-line {
