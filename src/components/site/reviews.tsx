@@ -113,11 +113,12 @@ export function Reviews() {
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false)
       }}
-      data-scene
+      data-scene="reviews"
+      data-bg="espresso"
       // Four screens on laptops: arrive, two steps through the reviews, be covered.
       className="relative z-40 md:-mt-[100svh] md:h-[400svh]"
     >
-      <div className="relative bg-espresso text-cream md:sticky md:top-0 md:h-svh md:overflow-hidden md:shadow-[0_-20px_50px_rgba(42,28,21,0.3)]">
+      <div data-scene-frame className="relative bg-espresso text-cream md:sticky md:top-0 md:h-svh md:overflow-hidden md:shadow-[0_-20px_50px_rgba(42,28,21,0.3)]">
       <div data-scene-lift className="mx-auto grid max-w-[1600px] md:h-svh md:min-h-[600px] md:grid-cols-2">
         <div className="relative hidden overflow-hidden md:block">
           <div data-review-photos className="absolute inset-0">

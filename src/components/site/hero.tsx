@@ -44,9 +44,11 @@ export function Hero({ video }: HeroProps) {
   return (
     // Scene 1. On laptops the section is two screens tall and its content sticks, so the
     // intro (pulled up by one screen) slides over a hero that stays put.
-    <section id="top" ref={root} data-scene className="relative md:h-[200svh]">
-      <div className="relative h-svh min-h-[560px] overflow-hidden bg-espresso text-cream md:sticky md:top-0">
+    <section id="top" ref={root} data-scene="hero" data-bg="cream" className="relative md:h-[200svh]">
+      <div data-scene-frame className="relative h-svh min-h-[560px] overflow-hidden bg-espresso text-cream md:sticky md:top-0">
       <div data-scene-recede className="absolute inset-0">
+      {/* Separate layer for the signature transition's zoom, so it doesn't fight the Ken Burns. */}
+      <div data-hero-zoom className="absolute inset-0">
         {video ? (
           <video
             className="h-full w-full object-cover"
@@ -75,9 +77,10 @@ export function Hero({ video }: HeroProps) {
           ))
         )}
       </div>
+      </div>
 
       {/* Top shade keeps the nav legible over bright skies; bottom shade carries the headline. */}
-      <div className="absolute inset-0 bg-gradient-to-b from-espresso/65 via-espresso/5 via-30% to-espresso/75" />
+      <div data-hero-shade className="absolute inset-0 bg-gradient-to-b from-espresso/65 via-espresso/5 via-30% to-espresso/75" />
       <div data-scene-dim className="pointer-events-none absolute inset-0 bg-espresso opacity-0" />
 
       <div data-scene-lift className="relative mx-auto flex h-full max-w-[1600px] flex-col justify-end px-5 pb-10 md:px-10 md:pb-14">

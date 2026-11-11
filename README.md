@@ -40,6 +40,13 @@ before launch.
   - headline and review text reveals (GSAP SplitText).
 - On laptops each section is a full-screen scroll scene (pinned, scrubbed to the scroll);
   phones keep normal scrolling.
+- Four scene transitions, set with `transition` in `src/config/brand.ts` and previewable
+  with `?transition=slide|dissolve|canvas|signature` (a switcher bar appears when that
+  parameter, or `?compare`, is in the address):
+  - `slide`: each scene slides up over the last;
+  - `dissolve`: each scene fades up in place, staggered so they never double-expose;
+  - `canvas`: one flowing page whose background colour shifts between sections;
+  - `signature`: the hero photo shrinks into the intro's photo frame, then flows like canvas.
 - `respectReducedMotion` in `src/config/brand.ts` decides whether visitors with the OS
   "reduce motion" setting get the full experience (`false`, the default) or a calm,
   static page (`true`). The slideshow has a pause control either way.

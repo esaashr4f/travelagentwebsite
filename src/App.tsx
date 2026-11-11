@@ -1,5 +1,6 @@
 import { Footer } from '@/components/site/footer'
 import { Nav } from '@/components/site/nav'
+import { TransitionSwitcher } from '@/components/site/transition-switcher'
 import { useSmoothScroll } from '@/hooks/use-smooth-scroll'
 import Home from '@/pages/home'
 
@@ -17,6 +18,7 @@ export default function App() {
       <Nav />
       <Home />
       <Footer />
+      <TransitionSwitcher />
     </>
   )
 }

@@ -4,6 +4,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { journeys } from '@/data/site'
+import { layered } from '@/lib/transition'
 
 export function Journeys() {
   const root = useRef<HTMLElement>(null)
@@ -18,7 +19,10 @@ export function Journeys() {
       const mm = gsap.matchMedia()
       mm.add('(min-width: 768px)', () => {
         const distance = () => track.current!.scrollWidth - window.innerWidth
-        const size = () => gsap.set(root.current, { height: `calc(200svh + ${distance()}px)` })
+        // One screen for the frame, the row's width to pan, and (when the next scene slides
+        // over it) one more screen to be covered.
+        const size = () =>
+          gsap.set(root.current, { height: `calc(${layered ? 200 : 100}svh + ${distance()}px)` })
         size()
         ScrollTrigger.addEventListener('refreshInit', size)
         gsap.to(track.current, {
@@ -53,8 +57,8 @@ export function Journeys() {
   )
 
   return (
-    <section id="journeys" ref={root} data-scene className="relative z-30 md:-mt-[100svh]">
-      <div className="relative overflow-hidden bg-sand py-24 md:sticky md:top-0 md:flex md:h-svh md:items-center md:py-0 md:pt-24 md:shadow-[0_-20px_50px_rgba(42,28,21,0.22)]">
+    <section id="journeys" ref={root} data-scene="journeys" data-bg="sand" className="relative z-30 md:-mt-[100svh]">
+      <div data-scene-frame className="relative overflow-hidden bg-sand py-24 md:sticky md:top-0 md:flex md:h-svh md:items-center md:py-0 md:pt-24 md:shadow-[0_-20px_50px_rgba(42,28,21,0.22)]">
       <div data-scene-lift className="w-full">
       {/* scroll-px-5 makes snapping respect the side padding, so the first card keeps its margin. */}
       <div

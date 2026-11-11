@@ -157,3 +157,42 @@
   animation: kenburns 8s ease-out forwards;
 }
 
+
+/* ── Scene transitions (laptops). The markup is built for 'slide': each scene is pulled up
+   a screen and its frame is sticky, so it covers the one before. The other modes reshape
+   that here; their motion lives in src/hooks/use-scene-covers.ts. ── */
+@media (min-width: 768px) {
+  /* dissolve: same stacking, but scenes fade up in place, so no edge shadows. */
+  [data-transition='dissolve'] [data-scene-frame] {
+    box-shadow: none !important;
+  }
+
+  /* canvas, and signature after its opening: one flowing page. Scenes stop overlapping,
+     only the journeys row, the reviews and the enquiry hold still stay sticky, and frames
+     go transparent so the page colour can shift between sections. */
+  [data-transition='canvas'] [data-scene],
+  [data-transition='signature'] [data-scene]:not([data-scene='hero'], [data-scene='intro']) {
+    margin-top: 0 !important;
+  }
+  [data-transition='canvas'] :is([data-scene='hero'], [data-scene='intro'], [data-scene='collections']),
+  [data-transition='signature'] [data-scene='collections'] {
+    height: auto !important;
+  }
+  [data-transition='canvas'] :is([data-scene='hero'], [data-scene='intro'], [data-scene='collections']) > [data-scene-frame],
+  [data-transition='signature'] [data-scene='collections'] > [data-scene-frame] {
+    position: relative !important;
+  }
+  [data-transition='canvas'] [data-scene]:not([data-scene='hero']) > [data-scene-frame],
+  [data-transition='signature'] [data-scene]:not([data-scene='hero']) > [data-scene-frame] {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  /* No one is covering the reviews any more, so they need no extra screen at the end. */
+  :is([data-transition='canvas'], [data-transition='signature']) [data-scene='reviews'] {
+    height: 300svh !important;
+  }
+  /* signature: the intro holds for its own animation, then scrolls on. */
+  [data-transition='signature'] [data-scene='intro'] {
+    height: 200svh !important;
+  }
+}

@@ -28,8 +28,8 @@ export function Enquire() {
     // Last scene. On laptops it slides over the reviews, then its frame sticks and holds for
     // most of a screen before the page lifts to reveal the footer, so a casual scroll
     // lands on the form rather than running past it. The form is sized to fit one screen.
-    <section id="enquire" data-scene className="relative z-50 md:-mt-[100svh] md:h-[175svh]">
-      <div className="relative bg-background md:sticky md:top-0 md:flex md:h-svh md:min-h-[640px] md:items-center md:shadow-[0_-20px_50px_rgba(42,28,21,0.3)]">
+    <section id="enquire" data-scene="enquire" data-bg="cream" className="relative z-50 md:-mt-[100svh] md:h-[175svh]">
+      <div data-scene-frame className="relative bg-background md:sticky md:top-0 md:flex md:h-svh md:min-h-[640px] md:items-center md:shadow-[0_-20px_50px_rgba(42,28,21,0.3)]">
       <div className="mx-auto w-full max-w-[1600px] px-5 py-24 md:px-10 md:pt-28 md:pb-8">
       <div className="grid gap-14 md:grid-cols-12 md:items-center md:gap-10">
         <div data-rise="80" className="order-2 md:order-1 md:col-span-6">

@@ -4,6 +4,7 @@ import { SplitText } from 'gsap/SplitText'
 import { useGSAP } from '@gsap/react'
 import { brand } from '@/config/brand'
 import { SCENES } from '@/lib/motion'
+import { transition } from '@/lib/transition'
 
 gsap.registerPlugin(SplitText)
 
@@ -19,14 +20,21 @@ export function Intro() {
       mm.add(SCENES, () => {
         split = SplitText.create('[data-statement]', { type: 'words' })
         // Runs while the intro arrives and holds: it finishes before the next scene covers it.
-        gsap
-          .timeline({
-            defaults: { ease: 'none' },
-            scrollTrigger: { trigger: root.current, start: 'top 55%', end: 'top -85%', scrub: true },
-          })
-          .fromTo('[data-intro-panel]', { yPercent: 101 }, { yPercent: 0, duration: 0.45 })
-          .fromTo('[data-intro-photo]', { scale: 1.3 }, { scale: 1, duration: 0.8 }, 0)
-          .fromTo(split.words, { opacity: 0.25 }, { opacity: 1, stagger: 0.03, duration: 0.25 }, 0.12)
+        const tl = gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: { trigger: root.current, start: 'top 55%', end: 'top -85%', scrub: true },
+        })
+        // In the signature transition the hero photo itself shrinks into this frame, so the
+        // intro doesn't run its own photo reveal.
+        if (transition !== 'signature') {
+          tl.fromTo('[data-intro-panel]', { yPercent: 101 }, { yPercent: 0, duration: 0.45 }).fromTo(
+            '[data-intro-photo]',
+            { scale: 1.3 },
+            { scale: 1, duration: 0.8 },
+            0,
+          )
+        }
+        tl.fromTo(split.words, { opacity: 0.25 }, { opacity: 1, stagger: 0.03, duration: 0.25 }, 0.12)
           .from('[data-intro-aside]', { opacity: 0, yPercent: 30, duration: 0.25 }, '>-0.15')
       })
       return () => {
@@ -41,12 +49,13 @@ export function Intro() {
     <section
       id="about"
       ref={root}
-      data-scene
+      data-scene="intro"
+      data-bg="cream"
       data-after-hero
       // Three screens tall on laptops: one to arrive, one to hold, one to be covered.
       className="relative z-10 md:-mt-[100svh] md:h-[300svh]"
     >
-      <div className="relative bg-background md:sticky md:top-0 md:flex md:h-svh md:min-h-[600px] md:items-center md:overflow-hidden md:shadow-[0_-20px_50px_rgba(42,28,21,0.22)]">
+      <div data-scene-frame className="relative bg-background md:sticky md:top-0 md:flex md:h-svh md:min-h-[600px] md:items-center md:overflow-hidden md:shadow-[0_-20px_50px_rgba(42,28,21,0.22)]">
         <div
           data-scene-lift
           className="mx-auto grid w-full max-w-[1600px] gap-14 px-5 py-24 md:grid-cols-12 md:items-center md:gap-10 md:px-10 md:py-0"
@@ -60,7 +69,7 @@ export function Intro() {
           </h2>
 
           <div className="flex flex-col gap-6 md:col-span-4 md:col-start-9">
-            <div className="overflow-hidden">
+            <div data-intro-slot className="overflow-hidden">
               <div data-intro-panel className="overflow-hidden">
                 <img
                   data-intro-photo

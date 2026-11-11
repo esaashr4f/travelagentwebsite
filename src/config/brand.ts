@@ -15,6 +15,9 @@ export const brand = {
   // false: smooth scrolling and every scroll scene run for all visitors, even with the
   // OS "reduce motion" setting on. true: those visitors get a calm, static page instead.
   respectReducedMotion: false,
+  // How scenes hand over on laptops: 'slide' | 'dissolve' | 'canvas' | 'signature'
+  // (see src/lib/transition.ts). Try them with ?transition=… in the address.
+  transition: 'slide' as 'slide' | 'dissolve' | 'canvas' | 'signature',
 }
 
 export const brandName = `${brand.name} ${brand.descriptor}`

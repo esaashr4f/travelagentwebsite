@@ -41,11 +41,12 @@ export function Collections() {
     <section
       id="collections"
       ref={root}
-      data-scene
+      data-scene="collections"
+      data-bg="cream"
       // 2.6 screens on laptops: arrive, hold briefly, be covered.
       className="relative z-20 md:-mt-[100svh] md:h-[260svh]"
     >
-      <div className="relative bg-background md:sticky md:top-0 md:flex md:h-svh md:min-h-[640px] md:flex-col md:justify-center md:overflow-hidden md:shadow-[0_-20px_50px_rgba(42,28,21,0.22)]">
+      <div data-scene-frame className="relative bg-background md:sticky md:top-0 md:flex md:h-svh md:min-h-[640px] md:flex-col md:justify-center md:overflow-hidden md:shadow-[0_-20px_50px_rgba(42,28,21,0.22)]">
       <div data-scene-lift className="mx-auto w-full max-w-[1600px] px-5 py-24 md:px-10 md:pt-28 md:pb-10">
         <h2 data-collections-title className="mb-10 text-[clamp(2.4rem,4.6vw,4.4rem)] leading-[1.05] md:mb-[5svh]">
           Where would you like to be?
