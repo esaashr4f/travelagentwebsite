@@ -1,14 +1,17 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { brand } from '@/config/brand'
+import { pick } from '@/lib/variant'
 
 // Focus thickens the underline in the ink colour instead of drawing an outline.
+// /changedversion: 17px text (the body size) and 48px-tall fields, for easy tapping.
 const field =
-  'w-full border-0 border-b border-line bg-transparent px-0 py-2.5 text-base text-ink placeholder:text-ink/70 focus:border-ink focus:shadow-[0_1px_0_0_var(--ink)] focus:outline-none focus-visible:outline-none [&>option]:bg-paper [&>option]:text-ink'
+  pick('py-3 text-[1.0625rem]', 'py-2.5 text-base') +
+  ' w-full border-0 border-b border-line bg-transparent px-0 text-ink placeholder:text-ink/70 focus:border-ink focus:shadow-[0_1px_0_0_var(--ink)] focus:outline-none focus-visible:outline-none [&>option]:bg-paper [&>option]:text-ink'
 
 function Field({ label, className, children }: { label: string; className?: string; children: ReactNode }) {
   return (
     <label className={'grid gap-1 ' + (className ?? '')}>
-      <span className="text-sm">{label}</span>
+      <span className={pick("type-small", "text-sm")}>{label}</span>
       {children}
     </label>
   )
@@ -25,8 +28,8 @@ export function Enquire() {
   }
 
   return (
-    <section id="enquire" className="grid border-t border-line md:min-h-[calc(100svh-var(--nav-h))] md:grid-cols-2">
-      <div className="relative min-h-[50svh] overflow-hidden bg-tint">
+    <section id="enquire" className={pick("md:items-center", "md:min-h-[calc(100svh-var(--nav-h))]") + " grid border-t border-line md:grid-cols-2"}>
+      <div className={pick("aspect-[3/2] md:aspect-[4/5]", "min-h-[50svh]") + " relative overflow-hidden bg-tint"}>
         <img
           data-parallax
           src="/images/enquire-breakfast.webp"
@@ -36,16 +39,16 @@ export function Enquire() {
           className="absolute inset-0 h-full w-full object-cover"
         />
       </div>
-      <div data-reveal className="flex items-center px-5 py-20 md:px-[6vw] md:py-[12svh]">
+      <div data-reveal className={pick("px-6", "px-5") + " flex items-center py-20 md:px-[6vw] md:py-[12svh]"}>
         <div className="w-full max-w-xl">
           {sent ? (
             <div role="status" className="py-16 text-center">
-              <h2 className="text-4xl">Thank you.</h2>
+              <h2 className={pick("type-h2", "text-4xl")}>Thank you.</h2>
               <p className="mt-4">{brand.advisor} will be in touch within one working day.</p>
             </div>
           ) : (
             <>
-              <h2 className="text-[clamp(2rem,3vw,2.75rem)] leading-[1.15]">
+              <h2 className={pick("type-h2", "text-[clamp(2rem,3vw,2.75rem)] leading-[1.15]")}>
                 Tell {brand.advisor} where you would like to go.
               </h2>
 
@@ -122,7 +125,7 @@ export function Enquire() {
                   >
                     Send enquiry
                   </button>
-                  <a href={brand.whatsapp} className="self-start text-sm sm:self-auto">
+                  <a href={brand.whatsapp} className={pick("type-small inline-flex min-h-11 items-center", "text-sm") + " self-start sm:self-auto"}>
                     <span className="link-line">Or message on WhatsApp</span>
                   </a>
                 </div>

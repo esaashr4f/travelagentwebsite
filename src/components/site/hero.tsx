@@ -3,6 +3,7 @@ import { brand } from '@/config/brand'
 import { heroSlides } from '@/data/site'
 import { reducedMotion } from '@/lib/motion'
 import { cn } from '@/lib/utils'
+import { pick } from '@/lib/variant'
 
 const SLIDE_MS = 5000
 
@@ -27,16 +28,16 @@ export function Hero({ video }: HeroProps) {
       {/* Sentinel the nav watches to know when the page has started to move. */}
       <div id="top-sentinel" aria-hidden className="h-px" />
 
-      <div className="mx-auto max-w-3xl px-5 pt-[7svh] pb-[6svh] text-center md:pt-[9svh]">
-        <h1 data-reveal className="text-[clamp(2.4rem,4.4vw,3.9rem)] leading-[1.1] tracking-[-0.01em]">
+      <div className={pick("px-6", "px-5") + " mx-auto max-w-3xl pt-[7svh] pb-[6svh] text-center md:pt-[9svh]"}>
+        <h1 data-reveal className={pick("type-display", "text-[clamp(2.4rem,4.4vw,3.9rem)] leading-[1.1] tracking-[-0.01em]")}>
           Journeys, beautifully planned.
         </h1>
-        <p data-reveal style={{ '--reveal-delay': '150ms' } as React.CSSProperties} className="mt-5 text-lg">
+        <p data-reveal style={{ '--reveal-delay': '150ms' } as React.CSSProperties} className={pick("mt-5", "mt-5 text-lg")}>
           Bespoke holidays, planned personally by {brand.advisorFullName}.
         </p>
       </div>
 
-      <div data-reveal style={{ '--reveal-delay': '250ms' } as React.CSSProperties} className="relative h-[72svh] min-h-[420px] overflow-hidden bg-tint md:h-[78svh]">
+      <div data-reveal style={{ '--reveal-delay': '250ms' } as React.CSSProperties} className={pick("relative aspect-[4/5] overflow-hidden bg-tint md:aspect-[21/9]", "relative h-[72svh] min-h-[420px] overflow-hidden bg-tint md:h-[78svh]")}>
         {video ? (
           <video
             className="h-full w-full object-cover"
@@ -67,7 +68,7 @@ export function Hero({ video }: HeroProps) {
       </div>
 
       {!video && (
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-5 py-4 text-sm md:px-10">
+        <div className={pick("type-small px-6 py-1", "px-5 py-4 text-sm") + " mx-auto flex max-w-[1600px] items-center justify-between md:px-10"}>
           <span key={active} className="animate-in fade-in duration-700">
             {heroSlides[active].place}
           </span>
@@ -75,7 +76,7 @@ export function Hero({ video }: HeroProps) {
             type="button"
             onClick={() => setPaused((p) => !p)}
             aria-label={paused ? 'Play slideshow' : 'Pause slideshow'}
-            className="-my-3 py-3"
+            className={pick("inline-flex min-h-11 min-w-11 items-center justify-end", "-my-3 py-3")}
           >
             <span className="link-line">{paused ? 'Play' : 'Pause'}</span>
           </button>

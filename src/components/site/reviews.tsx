@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { reviews } from '@/data/site'
 import { reducedMotion } from '@/lib/motion'
 import { cn } from '@/lib/utils'
+import { pick } from '@/lib/variant'
 
 const ROTATE_MS = 8000
 
@@ -33,17 +34,17 @@ export function Reviews() {
       onMouseLeave={() => setHeld(false)}
       onFocus={() => setHeld(true)}
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setHeld(false)}
-      className="border-t border-line px-5 py-[16svh] text-center"
+      className={pick("px-6", "px-5") + " border-t border-line py-[16svh] text-center"}
     >
       <figure data-reveal className="mx-auto max-w-3xl">
         <blockquote
           key={active}
           aria-live={auto ? 'off' : 'polite'}
-          className="min-h-[5.5em] animate-in fade-in duration-1000 text-[clamp(1.6rem,2.6vw,2.4rem)] leading-[1.35] font-light"
+          className={pick("type-h2 min-h-[4.6em]", "min-h-[5.5em] text-[clamp(1.6rem,2.6vw,2.4rem)] leading-[1.35]") + " animate-in fade-in duration-1000 font-light"}
         >
           “{r.quote}”
         </blockquote>
-        <figcaption className="mt-8 text-sm">Sample review, {r.trip}</figcaption>
+        <figcaption className={pick("type-small", "text-sm") + " mt-8"}>Sample review, {r.trip}</figcaption>
       </figure>
 
       <div className="mt-10 flex items-center justify-center gap-6">

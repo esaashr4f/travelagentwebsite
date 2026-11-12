@@ -3,6 +3,7 @@ import { brandName } from '@/config/brand'
 import { getLenis } from '@/hooks/use-smooth-scroll'
 import { cn } from '@/lib/utils'
 import { Wordmark } from './wordmark'
+import { pick } from '@/lib/variant'
 
 const links = [
   { label: 'Signature journeys', href: '#journeys' },
@@ -43,13 +44,13 @@ export function Nav() {
         compact && !open ? 'border-b border-line' : 'border-b border-transparent',
       )}
     >
-      <nav className="mx-auto grid h-[72px] max-w-[1600px] grid-cols-[1fr_auto_1fr] items-center px-5 md:px-10">
+      <nav className={pick("px-6", "px-5") + " mx-auto grid h-[72px] max-w-[1600px] grid-cols-[1fr_auto_1fr] items-center md:px-10"}>
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
           aria-controls="site-menu"
-          className="caps justify-self-start py-3"
+          className={pick("caps inline-flex min-h-11 items-center justify-self-start", "caps justify-self-start py-3")}
         >
           <span className="link-line">{open ? 'Close' : 'Menu'}</span>
         </button>
@@ -66,7 +67,7 @@ export function Nav() {
           <Wordmark className="text-[0.9rem]" />
         </a>
 
-        <a href="#enquire" onClick={() => setOpen(false)} className="caps justify-self-end py-3">
+        <a href="#enquire" onClick={() => setOpen(false)} className={pick("caps inline-flex min-h-11 items-center justify-self-end", "caps justify-self-end py-3")}>
           <span className="link-line">Enquire</span>
         </a>
       </nav>
@@ -81,7 +82,7 @@ export function Nav() {
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="text-[clamp(2rem,4vw,3.25rem)] font-light transition-opacity duration-300 hover:opacity-60"
+              className={pick("type-display", "text-[clamp(2rem,4vw,3.25rem)]") + " font-light transition-opacity duration-300 hover:opacity-60"}
             >
               {l.label}
             </a>
