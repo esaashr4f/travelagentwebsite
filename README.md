@@ -44,6 +44,22 @@ before launch.
   "reduce motion" setting get the full experience (`false`, the default) or a calm,
   static page (`true`). The slideshow has a pause control either way.
 
+## Film hero (/changedversion)
+
+`/changedversion` opens with a scroll-scrubbed film: the frame stays put while scrolling
+plays the clip forwards and backwards (`src/components/site/hero-scrub.tsx`). It draws
+still frames on a canvas rather than seeking a `<video>`, which judders.
+
+To swap the clip:
+
+```bash
+scripts/make-hero-frames.sh path/to/clip.mp4   # writes public/hero-sequence/, prints the count
+```
+
+Then set `heroSequence.count` (and `focus`, the point to keep in view when cropped) in
+`src/data/site.ts`. The current frames come from a 480p Seedance 2.5 draft, to be replaced
+by the final render.
+
 ## Previewing with Epicene (Klim test fonts)
 
 The design was drawn with Klim's Epicene in mind. Its test fonts are free for mock-ups but
