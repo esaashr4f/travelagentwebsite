@@ -60,7 +60,8 @@ Then set `heroSequence.count` (and `focus`, the point to keep in view when cropp
 `src/data/site.ts`. The script picks frames by how much the picture changes as well as by
 time (`--balance`), so a clip that eases in through cloud and then races still scrubs at an
 even pace. The current frames come from a 15-second, 720p Seedance 2.5 clip
-(`--frames 150 --balance 0.5`).
+(`--frames 200 --balance 0.5`). Neighbouring stills are cross-blended as you scroll, so
+the picture changes continuously rather than stepping from one still to the next.
 
 ## Previewing with Epicene (Klim test fonts)
 

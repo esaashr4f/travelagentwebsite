@@ -55,11 +55,11 @@ export const reviews = [
 ]
 
 // Frames of the scroll-scrubbed hero film on /changedversion (a 15-second Seedance 2.5
-// clip at 720p), made with scripts/make-hero-frames.py --frames 150 --balance 0.5.
+// clip at 720p), made with scripts/make-hero-frames.py --frames 200 --balance 0.5.
 // Swap the clip, re-run the script and update `count`.
 export const heroSequence = {
   dir: '/hero-sequence/',
-  count: 150,
+  count: 200,
   // Where the eye should stay when the frame is cropped (0-1 across, 0-1 down);
   // the resort sits a little right of centre and low.
   focus: { x: 0.58, y: 0.62 },

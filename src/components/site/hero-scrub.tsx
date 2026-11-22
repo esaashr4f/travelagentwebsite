@@ -14,40 +14,68 @@ const smoothstep = (a: number, b: number, v: number) => {
 // one still per step, drawn on a canvas. Stills scrub cleanly where a <video> judders.
 export function HeroScrub() {
   const section = useRef<HTMLElement>(null)
-  const canvas = useRef<HTMLCanvasElement>(null)
+  const canvasA = useRef<HTMLCanvasElement>(null)
+  const canvasB = useRef<HTMLCanvasElement>(null)
   const copy = useRef<HTMLDivElement>(null)
   const hint = useRef<HTMLParagraphElement>(null)
 
   useEffect(() => {
     const sec = section.current
-    const cvs = canvas.current
-    const ctx = cvs?.getContext('2d')
-    if (!sec || !cvs || !ctx) return
+    const a = canvasA.current
+    const b = canvasB.current
+    const ctxA = a?.getContext('2d')
+    const ctxB = b?.getContext('2d')
+    if (!sec || !a || !b || !ctxA || !ctxB) return
 
     const { count, focus } = heroSequence
     const frames: HTMLImageElement[] = []
-    let shown = -1
     let raf = 0
 
     const ready = (img?: HTMLImageElement) => !!img && img.complete && img.naturalWidth > 0
 
-    // Cover-fit the frame into the canvas, cropping around the focus point.
-    const paint = (i: number) => {
-      let k = i
-      while (k > 0 && !ready(frames[k])) k-- // fall back to the nearest earlier still
-      if (k === shown) return
-      const img = frames[k]
-      if (!ready(img)) return
-      const cw = cvs.width
-      const ch = cvs.height
-      const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight)
+    // Two stacked canvases, each holding one still. The film sits between two stills most
+    // of the time (e.g. 41.3 = still 41 with 30% of still 42 over it): the lower canvas
+    // holds the first, the upper the second, faded in with CSS opacity. Changing opacity
+    // is done by the graphics card without repainting anything, so the picture moves with
+    // every pixel of scroll while the canvases only redraw when a still changes.
+    type Layer = { cvs: HTMLCanvasElement; ctx: CanvasRenderingContext2D; still: number }
+    const layers: Layer[] = [
+      { cvs: a, ctx: ctxA, still: -1 },
+      { cvs: b, ctx: ctxB, still: -1 },
+    ]
+
+    // Cover-fit a still into a canvas, cropping around the focus point.
+    const draw = (layer: Layer, i: number) => {
+      const img = frames[i]
+      const { cvs, ctx } = layer
+      const s = Math.max(cvs.width / img.naturalWidth, cvs.height / img.naturalHeight)
       const w = img.naturalWidth * s
       const h = img.naturalHeight * s
-      const x = (cw - w) * focus.x
-      const y = (ch - h) * focus.y
-      ctx.imageSmoothingQuality = 'high'
-      ctx.drawImage(img, x, y, w, h)
-      shown = k
+      ctx.imageSmoothingQuality = 'low' // the film is barely scaled; 'high' only costs time
+      ctx.drawImage(img, (cvs.width - w) * focus.x, (cvs.height - h) * focus.y, w, h)
+      layer.still = i
+    }
+
+    const paint = (pos: number) => {
+      let i = Math.floor(pos)
+      let t = pos - i
+      while (i > 0 && !ready(frames[i])) {
+        i-- // not loaded yet: fall back to the nearest earlier still, unblended
+        t = 0
+      }
+      if (!ready(frames[i])) return
+      // Reuse whichever canvas already holds still i as the lower one (scrolling on by one
+      // still just swaps the two canvases' roles), so each step redraws at most one canvas.
+      const next = i + 1
+      const lower =
+        layers.find((l) => l.still === i) ?? layers.find((l) => l.still !== next) ?? layers[0]
+      const upper = lower === layers[0] ? layers[1] : layers[0]
+      if (lower.still !== i) draw(lower, i)
+      if (next < count && ready(frames[next]) && upper.still !== next) draw(upper, next)
+      lower.cvs.style.zIndex = '0'
+      lower.cvs.style.opacity = '1'
+      upper.cvs.style.zIndex = '1'
+      upper.cvs.style.opacity = upper.still === next ? String(t) : '0'
     }
 
     const progress = () => {
@@ -58,8 +86,7 @@ export function HeroScrub() {
     const update = () => {
       raf = 0
       const p = progress()
-      const i = Math.round(p * (count - 1))
-      if (i !== shown) paint(i)
+      paint(p * (count - 1))
       // The words step aside for the last stretch, so the reveal plays out clean.
       if (copy.current) {
         const out = smoothstep(0.62, 0.86, p)
@@ -75,9 +102,11 @@ export function HeroScrub() {
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      cvs.width = Math.round(cvs.clientWidth * dpr)
-      cvs.height = Math.round(cvs.clientHeight * dpr)
-      shown = -1
+      for (const l of layers) {
+        l.cvs.width = Math.round(l.cvs.clientWidth * dpr)
+        l.cvs.height = Math.round(l.cvs.clientHeight * dpr)
+        l.still = -1 // resizing clears a canvas
+      }
       update()
     }
 
@@ -93,16 +122,14 @@ export function HeroScrub() {
         .decode()
         .catch(() => {})
         .then(() => {
-          if (i === 0 || Math.round(progress() * (count - 1)) === i) {
-            shown = -1
-            schedule()
-          }
+          // Repaint if this still is one the film is waiting for.
+          if (i === 0 || Math.abs(progress() * (count - 1) - i) <= 1) schedule()
         })
       frames.push(img)
     }
 
     const ro = new ResizeObserver(resize)
-    ro.observe(cvs)
+    ro.observe(a)
     window.addEventListener('scroll', schedule, { passive: true })
     resize()
 
@@ -127,7 +154,11 @@ export function HeroScrub() {
           className="absolute inset-0 h-full w-full object-cover"
           style={{ objectPosition: `${heroSequence.focus.x * 100}% ${heroSequence.focus.y * 100}%` }}
         />
-        <canvas ref={canvas} aria-hidden className="absolute inset-0 h-full w-full" />
+        {/* isolate: the canvases' own stacking order stays inside this box. */}
+        <div aria-hidden className="absolute inset-0 isolate">
+          <canvas ref={canvasA} className="absolute inset-0 h-full w-full" />
+          <canvas ref={canvasB} className="absolute inset-0 h-full w-full opacity-0 will-change-[opacity]" />
+        </div>
 
         {/* Shade behind the words so they keep their contrast over the brightest cloud: an
             even veil on phones, where the words span the frame, a left-edge fade on laptops. */}
