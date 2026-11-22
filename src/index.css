@@ -173,36 +173,6 @@
   }
 }
 
-/* The film hero's title forms out of the cloud: it sharpens from a blur and its letters
-   draw together, as if the fog were clearing around it. The line and button follow. */
-@keyframes hero-materialize {
-  from {
-    opacity: 0;
-    filter: blur(18px);
-    letter-spacing: 0.06em;
-  }
-  60% {
-    opacity: 1;
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
-    letter-spacing: -0.025em;
-  }
-}
-@keyframes hero-follow {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-}
-.hero-materialize {
-  animation: hero-materialize 2.4s var(--ease-out) 0.25s both;
-}
-.hero-follow {
-  animation: hero-follow 1.2s var(--ease-out) 1.5s both;
-}
-
 @keyframes kenburns {
   from { transform: scale(1.08); }
   to { transform: scale(1); }

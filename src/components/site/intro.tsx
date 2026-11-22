@@ -20,7 +20,7 @@ function IntroRefined() {
         className="mt-10 max-w-sm md:col-span-4 md:col-start-9 md:mt-0 md:self-end"
       >
         <p>
-          {brand.advisor} has spent more than a decade sending people somewhere extraordinary, and looking after
+          {brand.advisor} sends people somewhere extraordinary, and looks after
           them while they are there.
         </p>
         <a href="#enquire" className="caps mt-6 inline-flex min-h-11 items-center">
@@ -43,7 +43,7 @@ function IntroOriginal() {
         style={{ '--reveal-delay': '150ms' } as React.CSSProperties}
         className="mx-auto mt-10 max-w-md text-lg leading-relaxed"
       >
-        {brand.advisor} has spent more than a decade sending people somewhere extraordinary, and looking after
+        {brand.advisor} sends people somewhere extraordinary, and looks after
         them while they are there.
       </p>
       <a
