@@ -3,7 +3,7 @@
 A one-page site for an independent luxury travel advisor, in a quiet, editorial style
 (paper-white page, one serif, photography doing the talking): photo-slideshow hero, intro,
 collections, a row of signature journeys, reviews and an enquiry form.
-Shown here as the fictional **Oriel Travel**.
+Shown here branded for **Travel with Yuval** (sample copy and reviews).
 
 ```bash
 npm install

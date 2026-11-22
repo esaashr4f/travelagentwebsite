@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { brandName } from '@/config/brand'
 import { heroSequence } from '@/data/site'
 
 const frameSrc = (i: number) => `${heroSequence.dir}f${String(i).padStart(3, '0')}.webp`
@@ -134,9 +135,10 @@ export function HeroScrub() {
           className="absolute inset-y-0 left-0 flex max-w-[min(42rem,92vw)] flex-col justify-center px-6 text-paper will-change-transform md:px-10 lg:px-16"
         >
           <h1 className="text-[clamp(3.25rem,1.5rem+6.4vw,7.25rem)] leading-[0.92] font-semibold tracking-[-0.025em]">
-            Travel
+            {/* "Travel" on its own line, then the rest: "with Yuval". */}
+            {brandName.split(' ')[0]}
             <br />
-            with Yuval
+            {brandName.split(' ').slice(1).join(' ')}
           </h1>
           <p className="mt-6 max-w-sm text-[1.0625rem] leading-relaxed text-paper/90">
             Bespoke holidays, planned personally from the first idea to the flight home.

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { brand, brandName } from '@/config/brand'
+import { brandName } from '@/config/brand'
 import { Collections } from '@/components/site/collections'
 import { Enquire } from '@/components/site/enquire'
 import { Hero } from '@/components/site/hero'
@@ -15,7 +15,7 @@ export default function Home() {
   useScrollMotion(root)
 
   useEffect(() => {
-    document.title = `${brandName} | Bespoke holidays by ${brand.advisorFullName}`
+    document.title = `${brandName} | Bespoke holidays`
   }, [])
 
   return (
