@@ -53,12 +53,13 @@ still frames on a canvas rather than seeking a `<video>`, which judders.
 To swap the clip:
 
 ```bash
-scripts/make-hero-frames.sh path/to/clip.mp4   # writes public/hero-sequence/, prints the count
+python3 scripts/make-hero-frames.py path/to/clip.mp4   # writes public/hero-sequence/, prints the count
 ```
 
 Then set `heroSequence.count` (and `focus`, the point to keep in view when cropped) in
-`src/data/site.ts`. The current frames come from a 480p Seedance 2.5 draft, to be replaced
-by the final render.
+`src/data/site.ts`. The script picks frames by how much the picture changes as well as by
+time (`--balance`), so a clip that eases in through cloud and then races still scrubs at an
+even pace. The current frames come from a 15-second, 720p Seedance 2.5 clip.
 
 ## Previewing with Epicene (Klim test fonts)
 

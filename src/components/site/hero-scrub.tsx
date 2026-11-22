@@ -15,7 +15,9 @@ const smoothstep = (a: number, b: number, v: number) => {
 export function HeroScrub() {
   const section = useRef<HTMLElement>(null)
   const canvas = useRef<HTMLCanvasElement>(null)
-  const copy = useRef<HTMLDivElement>(null)
+  const title = useRef<HTMLHeadingElement>(null)
+  const extras = useRef<HTMLDivElement>(null)
+  const shade = useRef<HTMLDivElement>(null)
   const hint = useRef<HTMLParagraphElement>(null)
 
   useEffect(() => {
@@ -59,12 +61,25 @@ export function HeroScrub() {
       const p = progress()
       const i = Math.round(p * (count - 1))
       if (i !== shown) paint(i)
-      // The words step aside for the last stretch, so the reveal plays out clean.
-      if (copy.current) {
-        const out = smoothstep(0.62, 0.86, p)
-        copy.current.style.opacity = String(1 - out)
-        copy.current.style.transform = `translateY(${-out * 32}px)`
+      // The title hangs in the sky and the camera flies at it: it grows slowly as the drone
+      // closes in, then rushes past, swelling, blurring and fading like anything in the frame
+      // that the camera overtakes. It scales from the middle of the frame (set in resize),
+      // so it slides outwards as it grows, the way the scenery does.
+      const approach = smoothstep(0, 0.28, p)
+      const pass = smoothstep(0.24, 0.5, p)
+      if (title.current) {
+        title.current.style.transform = `scale(${1 + 0.1 * approach + 0.9 * pass * pass})`
+        title.current.style.filter = pass > 0.001 ? `blur(${pass * 14}px)` : ''
+        title.current.style.opacity = String(1 - smoothstep(0.32, 0.5, p))
       }
+      // The supporting line and button are page furniture, not scenery: they bow out first.
+      if (extras.current) {
+        const out = smoothstep(0.14, 0.28, p)
+        extras.current.style.opacity = String(1 - out)
+        extras.current.style.visibility = out >= 1 ? 'hidden' : ''
+      }
+      // The shade behind the words lifts once they have gone, leaving the film clean.
+      if (shade.current) shade.current.style.opacity = String(1 - smoothstep(0.3, 0.55, p))
       // The scroll hint has done its job as soon as the film starts moving.
       if (hint.current) hint.current.style.opacity = String(1 - smoothstep(0, 0.06, p))
     }
@@ -76,6 +91,14 @@ export function HeroScrub() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
       cvs.width = Math.round(cvs.clientWidth * dpr)
       cvs.height = Math.round(cvs.clientHeight * dpr)
+      // The camera heads for the middle of the frame, a little low as it descends: the title
+      // grows away from that point.
+      if (title.current) {
+        const f = cvs.getBoundingClientRect()
+        const t = title.current.getBoundingClientRect()
+        const scale = t.width / (title.current.offsetWidth || t.width) || 1
+        title.current.style.transformOrigin = `${(f.left + f.width * 0.5 - t.left) / scale}px ${(f.top + f.height * 0.58 - t.top) / scale}px`
+      }
       shown = -1
       update()
     }
@@ -109,7 +132,7 @@ export function HeroScrub() {
   }, [])
 
   return (
-    <section id="top" ref={section} aria-label="Introduction" className="relative h-[300svh] pt-[var(--nav-h)]">
+    <section id="top" ref={section} aria-label="Introduction" className="relative h-[400svh] pt-[var(--nav-h)]">
       <div id="top-sentinel" aria-hidden className="absolute top-0 h-px w-px" />
 
       <div className="sticky top-[var(--nav-h)] h-[calc(100svh-var(--nav-h))] overflow-hidden bg-ink">
@@ -126,29 +149,35 @@ export function HeroScrub() {
         {/* Shade behind the words so they keep their contrast over the brightest cloud: an
             even veil on phones, where the words span the frame, a left-edge fade on laptops. */}
         <div
+          ref={shade}
           aria-hidden
           className="absolute inset-0 bg-[rgb(13_28_38/0.5)] md:bg-transparent md:bg-[linear-gradient(90deg,rgb(13_28_38/0.62)_0%,rgb(13_28_38/0.34)_38%,transparent_68%)]"
         />
 
-        <div
-          ref={copy}
-          className="absolute inset-y-0 left-0 flex max-w-[min(42rem,92vw)] flex-col justify-center px-6 text-paper will-change-transform md:px-10 lg:px-16"
-        >
-          <h1 className="text-[clamp(3.25rem,1.5rem+6.4vw,7.25rem)] leading-[0.92] font-semibold tracking-[-0.025em]">
-            {/* "Travel" on its own line, then the rest: "with Yuval". */}
-            {brandName.split(' ')[0]}
-            <br />
-            {brandName.split(' ').slice(1).join(' ')}
-          </h1>
-          <p className="mt-6 max-w-sm text-[1.0625rem] leading-relaxed text-paper/90">
-            Bespoke holidays, planned personally from the first idea to the flight home.
-          </p>
-          <a
-            href="#enquire"
-            className="press caps mt-8 inline-flex min-h-11 items-center self-start border border-paper/70 px-7 hover:bg-paper hover:text-ink"
+        <div className="absolute inset-y-0 left-0 flex max-w-[min(42rem,92vw)] flex-col justify-center px-6 text-paper md:px-10 lg:px-16">
+          <h1
+            ref={title}
+            className="text-[clamp(3.25rem,1.5rem+6.4vw,7.25rem)] leading-[0.92] font-semibold tracking-[-0.025em] [text-shadow:0_0_48px_rgb(255_214_170/0.35)] will-change-[transform,filter,opacity]"
           >
-            Plan a journey
-          </a>
+            {/* Forms out of the cloud as the page opens (index.css), lit warm like the sky.
+                "Travel" on its own line, then the rest: "with Yuval". */}
+            <span className="hero-materialize block">
+              {brandName.split(' ')[0]}
+              <br />
+              {brandName.split(' ').slice(1).join(' ')}
+            </span>
+          </h1>
+          <div ref={extras} className="hero-follow">
+            <p className="mt-6 max-w-sm text-[1.0625rem] leading-relaxed text-paper/90">
+              Bespoke holidays, planned personally from the first idea to the flight home.
+            </p>
+            <a
+              href="#enquire"
+              className="press caps mt-8 inline-flex min-h-11 items-center border border-paper/70 px-7 hover:bg-paper hover:text-ink"
+            >
+              Plan a journey
+            </a>
+          </div>
         </div>
 
         <p ref={hint} aria-hidden className="caps absolute bottom-6 left-1/2 -translate-x-1/2 text-paper/80">
