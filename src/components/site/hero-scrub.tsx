@@ -35,6 +35,7 @@ export function HeroScrub() {
     const paint = (i: number) => {
       let k = i
       while (k > 0 && !ready(frames[k])) k-- // fall back to the nearest earlier still
+      if (k === shown) return
       const img = frames[k]
       if (!ready(img)) return
       const cw = cvs.width
@@ -85,13 +86,18 @@ export function HeroScrub() {
       const img = new Image()
       img.decoding = 'async'
       if (i === 0) img.fetchPriority = 'high'
-      img.onload = () => {
-        if (i === 0 || Math.round(progress() * (count - 1)) === i) {
-          shown = -1
-          schedule()
-        }
-      }
       img.src = frameSrc(i)
+      // Decode each still as it arrives, so drawing it mid-scroll never waits on the decoder
+      // (a stall there is what makes a scrubbed film feel laggy).
+      img
+        .decode()
+        .catch(() => {})
+        .then(() => {
+          if (i === 0 || Math.round(progress() * (count - 1)) === i) {
+            shown = -1
+            schedule()
+          }
+        })
       frames.push(img)
     }
 
@@ -109,7 +115,7 @@ export function HeroScrub() {
   }, [])
 
   return (
-    <section id="top" ref={section} aria-label="Introduction" className="relative h-[300svh] pt-[var(--nav-h)]">
+    <section id="top" ref={section} aria-label="Introduction" className="relative h-[400svh] pt-[var(--nav-h)]">
       <div id="top-sentinel" aria-hidden className="absolute top-0 h-px w-px" />
 
       <div className="sticky top-[var(--nav-h)] h-[calc(100svh-var(--nav-h))] overflow-hidden bg-ink">

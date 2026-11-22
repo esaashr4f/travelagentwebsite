@@ -59,8 +59,8 @@ python3 scripts/make-hero-frames.py path/to/clip.mp4   # writes public/hero-sequ
 Then set `heroSequence.count` (and `focus`, the point to keep in view when cropped) in
 `src/data/site.ts`. The script picks frames by how much the picture changes as well as by
 time (`--balance`), so a clip that eases in through cloud and then races still scrubs at an
-even pace. The current frames come from a 10-second, 480p Seedance 2.5 clip, taken evenly in
-time (`--balance 0`).
+even pace. The current frames come from a 15-second, 720p Seedance 2.5 clip
+(`--frames 150 --balance 0.5`).
 
 ## Previewing with Epicene (Klim test fonts)
 
